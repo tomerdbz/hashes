@@ -23,7 +23,7 @@ fn compress_block(state: &mut [u64; 8], b: &[u8; BLOCK_SIZE]) {
     #[allow(clippy::needless_range_loop)]
     for r in 0..R {
         for i in 0..8 {
-            l[i] = C0[((k[(i) % 8] >> 0) & 0xff) as usize]
+            l[i] = C0[(k[(i) % 8] & 0xff) as usize]
                 ^ C1[((k[(7 + i) % 8] >> 8) & 0xff) as usize]
                 ^ C2[((k[(6 + i) % 8] >> 16) & 0xff) as usize]
                 ^ C3[((k[(5 + i) % 8] >> 24) & 0xff) as usize]
@@ -35,7 +35,7 @@ fn compress_block(state: &mut [u64; 8], b: &[u8; BLOCK_SIZE]) {
         }
         k = l;
         for i in 0..8 {
-            l[i] = C0[((s[(i) % 8] >> 0) & 0xff) as usize]
+            l[i] = C0[(s[(i) % 8] & 0xff) as usize]
                 ^ C1[((s[(7 + i) % 8] >> 8) & 0xff) as usize]
                 ^ C2[((s[(6 + i) % 8] >> 16) & 0xff) as usize]
                 ^ C3[((s[(5 + i) % 8] >> 24) & 0xff) as usize]

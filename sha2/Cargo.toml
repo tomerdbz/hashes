@@ -1,6 +1,6 @@
 [package]
 name = "sha2"
-version = "0.9.3"
+version = "0.9.2"
 description = """
 Pure Rust implementation of the SHA-2 hash function family
 including SHA-224, SHA-256, SHA-384, and SHA-512.
@@ -15,20 +15,18 @@ keywords = ["crypto", "sha2", "hash", "digest"]
 categories = ["cryptography", "no-std"]
 
 [dependencies]
-digest = "0.9"
-block-buffer = "0.9"
-opaque-debug = "0.3"
+digest = { version = "0.10.0-pre.2", features = ["core-api"] }
 cfg-if = "1.0"
-sha2-asm = { version = "0.5", optional = true }
+sha2-asm = { version = "0.6", optional = true }
 
 [target.'cfg(any(target_arch = "x86", target_arch = "x86_64"))'.dependencies]
 cpuid-bool = "0.1"
 
 [target.'cfg(all(target_arch = "aarch64", target_os = "linux"))'.dependencies]
-libc = { version = "0.2.84", optional = true }
+libc = { version = "0.2.82", optional = true }
 
 [dev-dependencies]
-digest = { version = "0.9", features = ["dev"] }
+digest = { version = "0.10.0-pre.2", features = ["dev"] }
 hex-literal = "0.2"
 
 [features]
@@ -37,4 +35,3 @@ std = ["digest/std"]
 asm = ["sha2-asm", "libc"]
 compress = [] # Expose compress function
 force-soft = [] # Force software implementation
-asm-aarch64 = ["asm"] # DEPRECATED: use `asm` instead

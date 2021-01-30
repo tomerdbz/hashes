@@ -7,8 +7,7 @@ members = [
     "md2",
     "md4",
     "md5",
-    "ripemd160",
-    "ripemd320",
+    "ripemd",
     "sha1",
     "sha2",
     "sha3",
@@ -19,3 +18,10 @@ members = [
 
 [profile.dev]
 opt-level = 2
+
+[patch.crates-io]
+md5-asm = { git = "https://github.com/RustCrypto/asm-hashes", branch = "blocks_proc" }
+sha1-asm = { git = "https://github.com/RustCrypto/asm-hashes", branch = "blocks_proc" }
+sha2-asm = { git = "https://github.com/RustCrypto/asm-hashes", branch = "blocks_proc" }
+whirlpool-asm = { git = "https://github.com/RustCrypto/asm-hashes", branch = "blocks_proc" }
+digest = { git = "https://github.com/RustCrypto/traits", branch = "digest/variable" }

@@ -117,7 +117,7 @@ macro_rules! implement {
                 let bit_len = 8 * (buffer.get_pos() as $dword + bs * self.block_len);
                 let pad = bit_len.to_be_bytes();
                 let s = &mut self.state;
-                buffer.digest_pad(&pad, |b| $compress(s, from_ref(b)));
+                buffer.digest_pad(0x80, &pad, |b| $compress(s, from_ref(b)));
                 let n = size_of::<$word>();
                 for (chunk, v) in out.chunks_mut(n).zip(s.iter()) {
                     chunk.copy_from_slice(&v.to_be_bytes()[..chunk.len()]);

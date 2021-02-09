@@ -100,7 +100,7 @@ impl FixedOutputCore for WhirlpoolCore {
         }
 
         let mut state = self.state;
-        buffer.digest_pad(&buf, |block| compress(&mut state, convert(from_ref(block))));
+        buffer.digest_pad(0x80, &buf, |block| compress(&mut state, convert(from_ref(block))));
 
         for (chunk, v) in out.chunks_exact_mut(8).zip(state.iter()) {
             chunk.copy_from_slice(&v.to_le_bytes());

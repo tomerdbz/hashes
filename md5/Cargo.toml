@@ -15,11 +15,11 @@ categories = ["cryptography", "no-std"]
 name = "md5"
 
 [dependencies]
-digest = { version = "0.10.0-pre.2", features = ["core-api"] }
+digest = { version = "0.10.0-pre.3", features = ["core-api"] }
 md5-asm = { version = "0.5", optional = true}
 
 [dev-dependencies]
-digest = { version = "0.10.0-pre.2", features = ["dev"] }
+digest = { version = "0.10.0-pre.3", features = ["dev"] }
 hex-literal = "0.2"
 
 [features]

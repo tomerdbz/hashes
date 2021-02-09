@@ -1,7 +1,5 @@
 use core::convert::TryInto;
-use digest::block_buffer::{block_padding::ZeroPadding, BlockBuffer};
-use digest::consts::U64;
-use digest::generic_array::GenericArray;
+use digest::{block_buffer::BlockBuffer, consts::U64, generic_array::GenericArray};
 
 use crate::consts::{BLOCK_SIZE, C};
 use crate::table::SHUFFLED_LIN_TABLE;
@@ -98,9 +96,8 @@ impl StreebogState {
 
     pub(crate) fn finalize(&mut self, buffer: &mut BlockBuffer<U64>) {
         let pos = buffer.get_pos();
-        let block = buffer.pad_with::<ZeroPadding>();
-        block[pos] = 1;
-        self.compress(block, pos as u64);
+        // note that it's guaranteed that `compress` will be called only once
+        buffer.digest_pad(1, &[], |b| self.compress(b, pos as u64));
         self.g(&[0u8; 64], &to_bytes(&self.n));
         self.g(&[0u8; 64], &to_bytes(&self.sigma));
     }

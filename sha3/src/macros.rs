@@ -14,6 +14,7 @@ macro_rules! sha3_impl {
 
         impl UpdateCore for $name {
             type BlockSize = $rate;
+            type Buffer = BlockBuffer<$rate>;
 
             fn update_blocks(&mut self, blocks: &[GenericArray<u8, $rate>]) {
                 for block in blocks {
@@ -91,6 +92,7 @@ macro_rules! shake_impl {
 
         impl UpdateCore for $name {
             type BlockSize = $rate;
+            type Buffer = BlockBuffer<$rate>;
 
             #[inline]
             fn update_blocks(&mut self, blocks: &[GenericArray<u8, $rate>]) {

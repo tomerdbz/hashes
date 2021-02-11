@@ -57,7 +57,8 @@ use digest::{
 mod c160;
 mod c320;
 
-type Block = GenericArray<u8, U64>;
+type BlockSize = U64;
+type Block = GenericArray<u8, BlockSize>;
 
 /// Core RIPEMD-160 hasher state.
 #[derive(Clone)]
@@ -67,7 +68,8 @@ pub struct Ripemd160Core {
 }
 
 impl UpdateCore for Ripemd160Core {
-    type BlockSize = U64;
+    type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
@@ -139,7 +141,8 @@ pub struct Ripemd320Core {
 }
 
 impl UpdateCore for Ripemd320Core {
-    type BlockSize = U64;
+    type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {

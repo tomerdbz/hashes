@@ -64,6 +64,7 @@ pub struct Md5Core {
 
 impl UpdateCore for Md5Core {
     type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {

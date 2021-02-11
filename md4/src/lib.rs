@@ -45,7 +45,8 @@ use digest::{
     Reset,
 };
 
-type Block = GenericArray<u8, U64>;
+type BlockSize = U64;
+type Block = GenericArray<u8, BlockSize>;
 
 #[derive(Clone)]
 pub struct Md4Core {
@@ -54,7 +55,8 @@ pub struct Md4Core {
 }
 
 impl UpdateCore for Md4Core {
-    type BlockSize = U64;
+    type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {

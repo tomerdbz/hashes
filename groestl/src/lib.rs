@@ -67,7 +67,8 @@ pub struct GroestlShortVarCore {
 }
 
 impl UpdateCore for GroestlShortVarCore {
-    type BlockSize = U64;
+    type BlockSize = ShortBlockSize;
+    type Buffer = BlockBuffer<ShortBlockSize>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[ShortBlock]) {
@@ -148,7 +149,8 @@ pub struct GroestlLongVarCore {
 }
 
 impl UpdateCore for GroestlLongVarCore {
-    type BlockSize = U128;
+    type BlockSize = LongBlockSize;
+    type Buffer = BlockBuffer<LongBlockSize>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[LongBlock]) {

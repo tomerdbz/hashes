@@ -97,6 +97,7 @@ macro_rules! implement {
 
         impl UpdateCore for $name {
             type BlockSize = $block_size;
+            type Buffer = BlockBuffer<$block_size>;
 
             #[inline]
             fn update_blocks(&mut self, blocks: &[GenericArray<u8, $block_size>]) {

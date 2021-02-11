@@ -43,7 +43,8 @@ use digest::{
 
 mod consts;
 
-type Block = GenericArray<u8, U16>;
+type BlockSize = U16;
+type Block = GenericArray<u8, BlockSize>;
 
 /// Core MD2 hasher state.
 #[derive(Clone)]
@@ -79,7 +80,8 @@ impl Md2Core {
 }
 
 impl UpdateCore for Md2Core {
-    type BlockSize = U16;
+    type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {

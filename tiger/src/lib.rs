@@ -62,6 +62,7 @@ pub struct TigerCore {
 
 impl UpdateCore for TigerCore {
     type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
 
     fn update_blocks(&mut self, blocks: &[Block]) {
         self.block_len += blocks.len() as u64;
@@ -131,6 +132,7 @@ pub struct Tiger2Core {
 
 impl UpdateCore for Tiger2Core {
     type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
 
     fn update_blocks(&mut self, blocks: &[Block]) {
         self.block_len += blocks.len() as u64;

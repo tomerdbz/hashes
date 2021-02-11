@@ -197,6 +197,7 @@ impl<P: Gost94Params> Gost94Core<P> {
 
 impl<P: Gost94Params> UpdateCore for Gost94Core<P> {
     type BlockSize = U32;
+    type Buffer = BlockBuffer<U32>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[GenericArray<u8, Self::BlockSize>]) {

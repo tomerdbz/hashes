@@ -62,6 +62,7 @@ pub struct Sha1Core {
 
 impl UpdateCore for Sha1Core {
     type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
 
     fn update_blocks(&mut self, blocks: &[Block]) {
         self.block_len += blocks.len() as u64;

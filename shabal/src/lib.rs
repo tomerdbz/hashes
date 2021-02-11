@@ -63,6 +63,7 @@ macro_rules! impl_core {
 
         impl UpdateCore for $name {
             type BlockSize = BlockSize;
+            type Buffer = BlockBuffer<BlockSize>;
 
             #[inline]
             fn update_blocks(&mut self, blocks: &[Block]) {

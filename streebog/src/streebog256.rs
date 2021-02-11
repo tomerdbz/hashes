@@ -19,6 +19,7 @@ pub struct Streebog256Core {
 
 impl UpdateCore for Streebog256Core {
     type BlockSize = U64;
+    type Buffer = BlockBuffer<U64>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[GenericArray<u8, Self::BlockSize>]) {

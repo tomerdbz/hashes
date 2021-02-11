@@ -74,6 +74,7 @@ pub struct WhirlpoolCore {
 
 impl UpdateCore for WhirlpoolCore {
     type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {

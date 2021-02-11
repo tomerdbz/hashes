@@ -39,7 +39,7 @@ use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
     core_api::{
-        AlgorithmName, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore, CoreWrapper,
+        AlgorithmName, CoreWrapper, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore,
         VariableOutputCore,
     },
     generic_array::{

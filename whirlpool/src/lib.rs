@@ -56,7 +56,7 @@ use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
     consts::U64,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
+    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };
@@ -101,7 +101,9 @@ impl FixedOutputCore for WhirlpoolCore {
         }
 
         let mut state = self.state;
-        buffer.digest_pad(0x80, &buf, |block| compress(&mut state, convert(from_ref(block))));
+        buffer.digest_pad(0x80, &buf, |block| {
+            compress(&mut state, convert(from_ref(block)))
+        });
 
         for (chunk, v) in out.chunks_exact_mut(8).zip(state.iter()) {
             chunk.copy_from_slice(&v.to_le_bytes());

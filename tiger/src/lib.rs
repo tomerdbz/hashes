@@ -37,13 +37,13 @@ pub use digest::{self, Digest};
 
 use core::{fmt, slice::from_ref};
 use digest::{
-    Reset,
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
+    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{
         typenum::{Unsigned, U24, U64},
         GenericArray,
     },
+    Reset,
 };
 
 mod compress;

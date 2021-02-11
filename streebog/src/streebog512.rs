@@ -1,7 +1,7 @@
 use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
+    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{typenum::U64, GenericArray},
     Reset,
 };

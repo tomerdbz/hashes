@@ -49,7 +49,7 @@ use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
     consts::{U20, U40, U64},
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
+    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };

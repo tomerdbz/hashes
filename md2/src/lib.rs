@@ -36,7 +36,7 @@ pub use digest::{self, Digest};
 use core::fmt;
 use digest::{
     block_buffer::{block_padding::Pkcs7, BlockBuffer},
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
+    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{typenum::U16, GenericArray},
     Reset,
 };

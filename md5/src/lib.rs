@@ -43,7 +43,7 @@ use compress::compress;
 use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
+    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{
         typenum::{Unsigned, U16, U64},
         GenericArray,

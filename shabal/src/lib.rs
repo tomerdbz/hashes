@@ -45,7 +45,7 @@ use core::fmt;
 use digest::{
     block_buffer::{block_padding::Iso7816, BlockBuffer},
     consts::{U24, U28, U32, U48, U64},
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
+    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };

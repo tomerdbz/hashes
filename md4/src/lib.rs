@@ -36,8 +36,9 @@ pub use digest::{self, Digest};
 
 use core::{convert::TryInto, fmt};
 use digest::{
+    Reset,
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{
         typenum::{Unsigned, U16, U64},
         GenericArray,
@@ -98,6 +99,13 @@ impl Default for Md4Core {
     }
 }
 
+impl Reset for Md4Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for Md4Core {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Md4")
@@ -111,7 +119,7 @@ impl fmt::Debug for Md4Core {
 }
 
 /// MD4 hasher state.
-pub type Md4 = UpdateCoreWrapper<Md4Core>;
+pub type Md4 = CoreWrapper<Md4Core>;
 
 fn compress(state: &mut [u32; 4], input: &Block) {
     fn f(x: u32, y: u32, z: u32) -> u32 {

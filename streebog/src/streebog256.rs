@@ -1,11 +1,12 @@
 use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{
         typenum::{U32, U64},
         GenericArray,
     },
+    Reset,
 };
 
 use crate::streebog::StreebogState;
@@ -51,6 +52,13 @@ impl Default for Streebog256Core {
     }
 }
 
+impl Reset for Streebog256Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for Streebog256Core {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Streebog256")
@@ -64,4 +72,4 @@ impl fmt::Debug for Streebog256Core {
 }
 
 /// Streebog256 hasher state.
-pub type Streebog256 = UpdateCoreWrapper<Streebog256Core>;
+pub type Streebog256 = CoreWrapper<Streebog256Core>;

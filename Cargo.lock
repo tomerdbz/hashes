@@ -4,10 +4,8 @@
 name = "blake2"
 version = "0.9.1"
 dependencies = [
- "crypto-mac",
- "digest 0.9.0",
+ "digest 0.10.0-pre.3",
  "hex-literal",
- "opaque-debug",
 ]
 
 [[package]]
@@ -28,7 +26,8 @@ checksum = "fc52553543ecb104069b0ff9e0fcc5c739ad16202935528a112d974e8f1a4ee8"
 [[package]]
 name = "block-buffer"
 version = "0.10.0-pre.2"
-source = "git+https://github.com/RustCrypto/utils?branch=digest_pad#33503d36ca5bd12b3f952cb25402997edafca4f5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9bda843099271fe07dc9638389268bf732e981d8a71d7a1472f79eb54cc5a827"
 dependencies = [
  "block-padding",
  "generic-array",
@@ -37,7 +36,8 @@ dependencies = [
 [[package]]
 name = "block-padding"
 version = "0.3.0-pre"
-source = "git+https://github.com/RustCrypto/utils?branch=digest_pad#33503d36ca5bd12b3f952cb25402997edafca4f5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3992d179d1dd2fa87869057217d43cf88ad31d4e44738d159a5a6caafdf63ae6"
 dependencies = [
  "generic-array",
 ]
@@ -67,14 +67,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8aebca1129a03dc6dc2b127edd729435bbc4a37e1d5f4d7513165089ceb02634"
 
 [[package]]
-name = "crypto-mac"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b584a330336237c1eecd3e94266efb216c56ed91225d634cb2991c5f3fd1aeab"
+name = "crypto-common"
+version = "0.1.0"
+source = "git+https://github.com/RustCrypto/traits?branch=common#2d14a756752f86173fe1cbd7d242d4905644e0c1"
 dependencies = [
- "blobby 0.1.2",
+ "block-buffer",
  "generic-array",
- "subtle",
 ]
 
 [[package]]
@@ -90,11 +88,10 @@ dependencies = [
 [[package]]
 name = "digest"
 version = "0.10.0-pre.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9c8cdee23593b2baf43a90cdb5df9bcea1db5e86a86bdab1e8eee41776a0fbf"
+source = "git+https://github.com/RustCrypto/traits?branch=common#2d14a756752f86173fe1cbd7d242d4905644e0c1"
 dependencies = [
  "blobby 0.3.0",
- "block-buffer",
+ "crypto-common",
  "generic-array",
 ]
 
@@ -198,12 +195,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "opaque-debug"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
-
-[[package]]
 name = "proc-macro-hack"
 version = "0.5.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -283,12 +274,6 @@ dependencies = [
  "digest 0.10.0-pre.3",
  "hex-literal",
 ]
-
-[[package]]
-name = "subtle"
-version = "2.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "502d53007c02d7605a05df1c1a73ee436952781653da5d0bf57ad608f66932c1"
 
 [[package]]
 name = "tiger"

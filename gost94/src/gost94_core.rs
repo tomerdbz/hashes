@@ -5,6 +5,7 @@ use digest::{
     consts::U32,
     core_api::{AlgorithmName, FixedOutputCore, UpdateCore},
     generic_array::{typenum::Unsigned, GenericArray},
+    Reset,
 };
 
 use crate::params::{Block, Gost94Params, SBox};
@@ -244,6 +245,13 @@ impl<P: Gost94Params> Default for Gost94Core<P> {
             sigma: Default::default(),
             _m: Default::default(),
         }
+    }
+}
+
+impl<P: Gost94Params> Reset for Gost94Core<P> {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
     }
 }
 

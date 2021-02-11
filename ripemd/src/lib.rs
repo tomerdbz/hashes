@@ -49,8 +49,9 @@ use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
     consts::{U20, U40, U64},
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{typenum::Unsigned, GenericArray},
+    Reset,
 };
 
 mod c160;
@@ -108,6 +109,13 @@ impl Default for Ripemd160Core {
     }
 }
 
+impl Reset for Ripemd160Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for Ripemd160Core {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Ripemd160")
@@ -121,7 +129,7 @@ impl fmt::Debug for Ripemd160Core {
 }
 
 /// RIPEMD-160 hasher state.
-pub type Ripemd160 = UpdateCoreWrapper<Ripemd160Core>;
+pub type Ripemd160 = CoreWrapper<Ripemd160Core>;
 
 /// Core RIPEMD-320 hasher state.
 #[derive(Clone)]
@@ -173,6 +181,13 @@ impl Default for Ripemd320Core {
     }
 }
 
+impl Reset for Ripemd320Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for Ripemd320Core {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Ripemd320")
@@ -186,4 +201,4 @@ impl fmt::Debug for Ripemd320Core {
 }
 
 /// RIPEMD-320 hasher state.
-pub type Ripemd320 = UpdateCoreWrapper<Ripemd320Core>;
+pub type Ripemd320 = CoreWrapper<Ripemd320Core>;

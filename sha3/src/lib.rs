@@ -71,10 +71,11 @@ use digest::{
     block_buffer::BlockBuffer,
     consts::{U104, U136, U144, U168, U200, U28, U32, U48, U64, U72},
     core_api::{
-        AlgorithmName, ExtendableOutputCore, FixedOutputCore, UpdateCore, UpdateCoreWrapper,
+        AlgorithmName, ExtendableOutputCore, FixedOutputCore, UpdateCore, CoreWrapper,
         XofReaderCore, XofReaderCoreWrapper,
     },
     generic_array::GenericArray,
+    Reset,
 };
 
 mod paddings;

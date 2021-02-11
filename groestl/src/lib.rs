@@ -39,7 +39,7 @@ use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
     core_api::{
-        AlgorithmName, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore, UpdateCoreWrapper,
+        AlgorithmName, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore, CoreWrapper,
         VariableOutputCore,
     },
     generic_array::{
@@ -133,12 +133,12 @@ pub type GroestlShortVar = RtVariableCoreWrapper<GroestlShortVarCore>;
 /// Core hasher state of the short Groestl variant generic over output size.
 pub type GroestlShortCore<OutSize> = CtVariableCoreWrapper<GroestlShortVarCore, OutSize>;
 /// Hasher state of the short Groestl variant generic over output size.
-pub type GroestlShort<OutSize> = UpdateCoreWrapper<GroestlShortCore<OutSize>>;
+pub type GroestlShort<OutSize> = CoreWrapper<GroestlShortCore<OutSize>>;
 
 /// Groestl-224 hasher state.
-pub type Groestl224 = UpdateCoreWrapper<GroestlShortCore<U28>>;
+pub type Groestl224 = CoreWrapper<GroestlShortCore<U28>>;
 /// Groestl-256 hasher state.
-pub type Groestl256 = UpdateCoreWrapper<GroestlShortCore<U32>>;
+pub type Groestl256 = CoreWrapper<GroestlShortCore<U32>>;
 
 /// Lowest-level core hasher state of the long Groestl variant.
 #[derive(Clone)]
@@ -214,9 +214,9 @@ pub type GroestlLongVar = RtVariableCoreWrapper<GroestlLongVarCore>;
 /// Core hasher state of the long Groestl variant generic over output size.
 pub type GroestlLongCore<OutSize> = CtVariableCoreWrapper<GroestlLongVarCore, OutSize>;
 /// Hasher state of the long Groestl variant generic over output size.
-pub type GroestlLong<OutSize> = UpdateCoreWrapper<GroestlLongCore<OutSize>>;
+pub type GroestlLong<OutSize> = CoreWrapper<GroestlLongCore<OutSize>>;
 
 /// Groestl-384 hasher state.
-pub type Groestl384 = UpdateCoreWrapper<GroestlLongCore<U48>>;
+pub type Groestl384 = CoreWrapper<GroestlLongCore<U48>>;
 /// Groestl-512 hasher state.
-pub type Groestl512 = UpdateCoreWrapper<GroestlLongCore<U64>>;
+pub type Groestl512 = CoreWrapper<GroestlLongCore<U64>>;

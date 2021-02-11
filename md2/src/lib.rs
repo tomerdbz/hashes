@@ -36,8 +36,9 @@ pub use digest::{self, Digest};
 use core::fmt;
 use digest::{
     block_buffer::{block_padding::Pkcs7, BlockBuffer},
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{typenum::U16, GenericArray},
+    Reset,
 };
 
 mod consts;
@@ -115,6 +116,13 @@ impl Default for Md2Core {
     }
 }
 
+impl Reset for Md2Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for Md2Core {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Md2")
@@ -128,4 +136,4 @@ impl fmt::Debug for Md2Core {
 }
 
 /// MD2 hasher state.
-pub type Md2 = UpdateCoreWrapper<Md2Core>;
+pub type Md2 = CoreWrapper<Md2Core>;

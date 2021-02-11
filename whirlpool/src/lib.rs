@@ -56,8 +56,9 @@ use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
     consts::U64,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{typenum::Unsigned, GenericArray},
+    Reset,
 };
 
 type BlockSize = U64;
@@ -128,6 +129,13 @@ impl Default for WhirlpoolCore {
     }
 }
 
+impl Reset for WhirlpoolCore {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for WhirlpoolCore {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("WhirlpoolCore")
@@ -141,7 +149,7 @@ impl fmt::Debug for WhirlpoolCore {
 }
 
 /// Whirlpool hasher state.
-pub type Whirlpool = UpdateCoreWrapper<WhirlpoolCore>;
+pub type Whirlpool = CoreWrapper<WhirlpoolCore>;
 
 #[inline(always)]
 fn adc(a: &mut u64, b: u64, carry: &mut u64) {

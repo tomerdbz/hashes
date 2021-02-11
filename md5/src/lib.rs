@@ -43,11 +43,12 @@ use compress::compress;
 use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{
         typenum::{Unsigned, U16, U64},
         GenericArray,
     },
+    Reset,
 };
 
 type BlockSize = U64;
@@ -103,6 +104,13 @@ impl Default for Md5Core {
     }
 }
 
+impl Reset for Md5Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for Md5Core {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Md5")
@@ -116,7 +124,7 @@ impl fmt::Debug for Md5Core {
 }
 
 /// MD5 hasher state.
-pub type Md5 = UpdateCoreWrapper<Md5Core>;
+pub type Md5 = CoreWrapper<Md5Core>;
 
 #[inline(always)]
 fn convert(blocks: &[Block]) -> &[[u8; BLOCK_SIZE]] {

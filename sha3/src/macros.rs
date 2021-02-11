@@ -50,6 +50,13 @@ macro_rules! sha3_impl {
             }
         }
 
+        impl Reset for $name {
+            #[inline]
+            fn reset(&mut self) {
+                *self = Default::default();
+            }
+        }
+
         impl AlgorithmName for $name {
             fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 f.write_str(stringify!($full_name))
@@ -64,7 +71,7 @@ macro_rules! sha3_impl {
 
         #[doc = $alg_name]
         #[doc = " hasher state."]
-        pub type $full_name = UpdateCoreWrapper<$name>;
+        pub type $full_name = CoreWrapper<$name>;
     };
 }
 
@@ -118,6 +125,13 @@ macro_rules! shake_impl {
             }
         }
 
+        impl Reset for $name {
+            #[inline]
+            fn reset(&mut self) {
+                *self = Default::default();
+            }
+        }
+
         impl AlgorithmName for $name {
             fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 f.write_str(stringify!($full_name))
@@ -156,7 +170,7 @@ macro_rules! shake_impl {
 
         #[doc = $alg_name]
         #[doc = " hasher state."]
-        pub type $full_name = UpdateCoreWrapper<$name>;
+        pub type $full_name = CoreWrapper<$name>;
 
         #[doc = $alg_name]
         #[doc = " reader state."]

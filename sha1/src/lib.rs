@@ -34,8 +34,9 @@ pub use digest::{self, Digest};
 
 use core::{fmt, slice::from_ref};
 use digest::{
+    Reset,
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{
         typenum::{Unsigned, U20, U64},
         GenericArray,
@@ -98,6 +99,13 @@ impl Default for Sha1Core {
     }
 }
 
+impl Reset for Sha1Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for Sha1Core {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Sha1")
@@ -111,7 +119,7 @@ impl fmt::Debug for Sha1Core {
 }
 
 /// SHA-1 hasher state.
-pub type Sha1 = UpdateCoreWrapper<Sha1Core>;
+pub type Sha1 = CoreWrapper<Sha1Core>;
 
 #[inline(always)]
 fn convert(blocks: &[Block]) -> &[[u8; BLOCK_SIZE]] {

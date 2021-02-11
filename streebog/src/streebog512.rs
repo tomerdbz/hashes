@@ -1,8 +1,9 @@
 use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{typenum::U64, GenericArray},
+    Reset,
 };
 
 use crate::streebog::StreebogState;
@@ -48,6 +49,13 @@ impl Default for Streebog512Core {
     }
 }
 
+impl Reset for Streebog512Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for Streebog512Core {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Streebog512")
@@ -61,4 +69,4 @@ impl fmt::Debug for Streebog512Core {
 }
 
 /// Streebog512 hasher state.
-pub type Streebog512 = UpdateCoreWrapper<Streebog512Core>;
+pub type Streebog512 = CoreWrapper<Streebog512Core>;

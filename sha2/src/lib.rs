@@ -63,8 +63,9 @@ pub use digest::{self, Digest};
 
 use core::{fmt, mem::size_of, slice::from_ref};
 use digest::{
+    Reset,
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{
         typenum::{Unsigned, U128, U28, U32, U48, U64},
         GenericArray,
@@ -135,6 +136,13 @@ macro_rules! implement {
             }
         }
 
+        impl Reset for $name {
+            #[inline]
+            fn reset(&mut self) {
+                *self = Default::default();
+            }
+        }
+
         impl AlgorithmName for $name {
             fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 f.write_str(stringify!($full_name))
@@ -149,7 +157,7 @@ macro_rules! implement {
 
         #[doc = $alg_name]
         #[doc = " hasher state."]
-        pub type $full_name = UpdateCoreWrapper<$name>;
+        pub type $full_name = CoreWrapper<$name>;
     };
 }
 

@@ -34,7 +34,7 @@
 #[cfg(feature = "std")]
 extern crate std;
 
-use digest::core_api::UpdateCoreWrapper;
+use digest::core_api::CoreWrapper;
 
 mod gost94_core;
 /// GOST94 parameters.
@@ -45,8 +45,8 @@ pub use digest::{self, Digest};
 pub use gost94_core::Gost94Core;
 
 /// GOST94 hash function with CryptoPro parameters.
-pub type Gost94CryptoPro = UpdateCoreWrapper<Gost94Core<params::CryptoProParam>>;
+pub type Gost94CryptoPro = CoreWrapper<Gost94Core<params::CryptoProParam>>;
 /// GOST94 hash function with S-box defined in GOST R 34.12-2015.
-pub type Gost94s2015 = UpdateCoreWrapper<Gost94Core<params::S2015Param>>;
+pub type Gost94s2015 = CoreWrapper<Gost94Core<params::S2015Param>>;
 /// GOST94 hash function with test parameters.
-pub type Gost94Test = UpdateCoreWrapper<Gost94Core<params::TestParam>>;
+pub type Gost94Test = CoreWrapper<Gost94Core<params::TestParam>>;

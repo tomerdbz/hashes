@@ -45,8 +45,9 @@ use core::fmt;
 use digest::{
     block_buffer::{block_padding::Iso7816, BlockBuffer},
     consts::{U24, U28, U32, U48, U64},
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{typenum::Unsigned, GenericArray},
+    Reset,
 };
 use state::{compress, compress_final, Block, BlockSize, EngineState};
 
@@ -99,6 +100,13 @@ macro_rules! impl_core {
             }
         }
 
+        impl Reset for $name {
+            #[inline]
+            fn reset(&mut self) {
+                *self = Default::default();
+            }
+        }
+
         impl AlgorithmName for $name {
             fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 f.write_str(stringify!($full_name))
@@ -113,7 +121,7 @@ macro_rules! impl_core {
 
         #[doc = $alg_name]
         #[doc = " hasher state."]
-        pub type $full_name = UpdateCoreWrapper<$name>;
+        pub type $full_name = CoreWrapper<$name>;
     };
 }
 

@@ -37,8 +37,9 @@ pub use digest::{self, Digest};
 
 use core::{fmt, slice::from_ref};
 use digest::{
+    Reset,
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, UpdateCoreWrapper},
+    core_api::{AlgorithmName, FixedOutputCore, UpdateCore, CoreWrapper},
     generic_array::{
         typenum::{Unsigned, U24, U64},
         GenericArray,
@@ -103,6 +104,12 @@ impl Default for TigerCore {
     }
 }
 
+impl Reset for TigerCore {
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for TigerCore {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Tiger")
@@ -164,6 +171,13 @@ impl Default for Tiger2Core {
     }
 }
 
+impl Reset for Tiger2Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
 impl AlgorithmName for Tiger2Core {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Tiger2")
@@ -177,6 +191,6 @@ impl fmt::Debug for Tiger2Core {
 }
 
 /// Tiger hasher state.
-pub type Tiger = UpdateCoreWrapper<TigerCore>;
+pub type Tiger = CoreWrapper<TigerCore>;
 /// Tiger2 hasher state.
-pub type Tiger2 = UpdateCoreWrapper<Tiger2Core>;
+pub type Tiger2 = CoreWrapper<Tiger2Core>;

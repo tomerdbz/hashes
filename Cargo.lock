@@ -69,7 +69,7 @@ checksum = "8aebca1129a03dc6dc2b127edd729435bbc4a37e1d5f4d7513165089ceb02634"
 [[package]]
 name = "crypto-common"
 version = "0.1.0"
-source = "git+https://github.com/RustCrypto/traits?branch=common#2d14a756752f86173fe1cbd7d242d4905644e0c1"
+source = "git+https://github.com/RustCrypto/traits?branch=common#7f48e7764d457c6fefcbe9ea89b6e331342b6648"
 dependencies = [
  "block-buffer",
  "generic-array",
@@ -88,7 +88,7 @@ dependencies = [
 [[package]]
 name = "digest"
 version = "0.10.0-pre.3"
-source = "git+https://github.com/RustCrypto/traits?branch=common#2d14a756752f86173fe1cbd7d242d4905644e0c1"
+source = "git+https://github.com/RustCrypto/traits?branch=common#7f48e7764d457c6fefcbe9ea89b6e331342b6648"
 dependencies = [
  "blobby 0.3.0",
  "crypto-common",

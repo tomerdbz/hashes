@@ -2,8 +2,8 @@ use crate::consts::BLAKE2S_IV;
 use digest::generic_array::typenum::{U32, U64};
 
 blake2_impl!(
-    VarBlake2s,
-    Blake2s,
+    Blake2sVarCore,
+    "Blake2s",
     u32,
     u32x4,
     U32,

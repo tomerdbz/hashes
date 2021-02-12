@@ -1,32 +1,42 @@
 macro_rules! blake2_impl {
     (
-        $state:ident, $fix_state:ident, $word:ident, $vec:ident, $bytes:ident,
+        $name:ident, $alg_name:expr, $word:ident, $vec:ident, $bytes:ident,
         $block_size:ident, $R1:expr, $R2:expr, $R3:expr, $R4:expr, $IV:expr,
         $vardoc:expr, $doc:expr,
     ) => {
         use $crate::as_bytes::AsBytes;
         use $crate::simd::{$vec, Vector4};
 
-        use core::{cmp, convert::TryInto, ops::Div};
-        use crypto_mac::{InvalidKeyLength, Mac, NewMac};
-        use digest::generic_array::typenum::{Unsigned, U4};
-        use digest::generic_array::GenericArray;
-        use digest::InvalidOutputSize;
-        use digest::{BlockInput, FixedOutputDirty, Reset, Update, VariableOutputDirty};
+        use core::{convert::TryInto, ops::Div};
+        // use crypto_mac::{InvalidKeyLength, Mac, NewMac};
+        use core::fmt;
+        use digest::{
+            block_buffer::LazyBlockBuffer,
+            core_api::{
+                AlgorithmName, UpdateCore, VariableOutputCore,
+            },
+            generic_array::{
+                typenum::{Unsigned, U4},
+                GenericArray,
+            },
+            InvalidOutputSize,
+        };
+        // use crypto_mac::FromKey;
 
         type Output = GenericArray<u8, $bytes>;
+        type Block = GenericArray<u8, $block_size>;
 
         #[derive(Clone)]
         #[doc=$vardoc]
-        pub struct $state {
-            m: [$word; 16],
+        pub struct $name {
+            // m: [$word; 16],
             h: [$vec; 2],
             t: u64,
-            n: usize,
+            // n: usize,
 
-            h0: [$vec; 2],
-            m0: [$word; 16],
-            t0: u64,
+            // h0: [$vec; 2],
+            // m0: [$word; 16],
+            // t0: u64,
         }
 
         #[inline(always)]
@@ -71,7 +81,7 @@ macro_rules! blake2_impl {
             unshuffle(v);
         }
 
-        impl $state {
+        impl $name {
             /// Creates a new hashing context with a key.
             ///
             /// **WARNING!** If you plan to use it for variable output MAC, then
@@ -140,15 +150,15 @@ macro_rules! blake2_impl {
                     );
                 }
 
-                let mut state = Self::with_parameter_block(&p);
+                let state = Self::with_parameter_block(&p);
 
-                if kk > 0 {
-                    copy(key, state.m.as_mut_bytes());
-                    state.t = 2 * $bytes::to_u64();
-                }
+                // if kk > 0 {
+                //     copy(key, state.m.as_mut_bytes());
+                //     state.t = 2 * $bytes::to_u64();
+                // }
 
-                state.t0 = state.t;
-                state.m0 = state.m;
+                // state.t0 = state.t;
+                // state.m0 = state.m;
                 state
             }
 
@@ -164,18 +174,19 @@ macro_rules! blake2_impl {
                     iv1() ^ $vec::new(p[4], p[5], p[6], p[7]),
                 ];
 
-                $state {
-                    m: [0; 16],
+                $name {
+                    // m: [0; 16],
                     h: h0,
                     t: 0,
-                    n: nn,
+                    // n: nn,
 
-                    t0: 0,
-                    m0: [0; 16],
-                    h0,
+                    // t0: 0,
+                    // m0: [0; 16],
+                    // h0,
                 }
             }
 
+            /*
             /// Updates the hashing context with more data.
             fn update(&mut self, data: &[u8]) {
                 let mut rest = data;
@@ -225,14 +236,10 @@ macro_rules! blake2_impl {
             pub fn finalize_last_node(mut self) -> Output {
                 self.finalize_with_flag(!0)
             }
+            */
 
-            fn finalize_with_flag(&mut self, f1: $word) -> Output {
-                let off = self.t as usize % (2 * $bytes::to_usize());
-                if off != 0 {
-                    self.m.as_mut_bytes()[off..].iter_mut().for_each(|b| *b = 0);
-                }
-
-                self.compress(!0, f1);
+            fn finalize_with_flag(&mut self, block: &Block, flag: $word) -> Output {
+                self.compress(block, !0, flag);
 
                 let buf = [self.h[0].to_le(), self.h[1].to_le()];
 
@@ -241,10 +248,14 @@ macro_rules! blake2_impl {
                 out
             }
 
-            fn compress(&mut self, f0: $word, f1: $word) {
+            fn compress(&mut self, block: &Block, f0: $word, f1: $word) {
                 use $crate::consts::SIGMA;
 
-                let m = &self.m;
+                let mut m: [$word; 16] = Default::default();
+                let n = core::mem::size_of::<$word>();
+                for (v, chunk) in m.iter_mut().zip(block.chunks_exact(n)) {
+                    *v = $word::from_le_bytes(chunk.try_into().unwrap());
+                }
                 let h = &mut self.h;
 
                 let t0 = self.t as $word;
@@ -256,19 +267,19 @@ macro_rules! blake2_impl {
 
                 let mut v = [h[0], h[1], iv0(), iv1() ^ $vec::new(t0, t1, f0, f1)];
 
-                round(&mut v, m, &SIGMA[0]);
-                round(&mut v, m, &SIGMA[1]);
-                round(&mut v, m, &SIGMA[2]);
-                round(&mut v, m, &SIGMA[3]);
-                round(&mut v, m, &SIGMA[4]);
-                round(&mut v, m, &SIGMA[5]);
-                round(&mut v, m, &SIGMA[6]);
-                round(&mut v, m, &SIGMA[7]);
-                round(&mut v, m, &SIGMA[8]);
-                round(&mut v, m, &SIGMA[9]);
+                round(&mut v, &m, &SIGMA[0]);
+                round(&mut v, &m, &SIGMA[1]);
+                round(&mut v, &m, &SIGMA[2]);
+                round(&mut v, &m, &SIGMA[3]);
+                round(&mut v, &m, &SIGMA[4]);
+                round(&mut v, &m, &SIGMA[5]);
+                round(&mut v, &m, &SIGMA[6]);
+                round(&mut v, &m, &SIGMA[7]);
+                round(&mut v, &m, &SIGMA[8]);
+                round(&mut v, &m, &SIGMA[9]);
                 if $bytes::to_u8() == 64 {
-                    round(&mut v, m, &SIGMA[0]);
-                    round(&mut v, m, &SIGMA[1]);
+                    round(&mut v, &m, &SIGMA[0]);
+                    round(&mut v, &m, &SIGMA[1]);
                 }
 
                 h[0] = h[0] ^ (v[0] ^ v[2]);
@@ -276,133 +287,75 @@ macro_rules! blake2_impl {
             }
         }
 
-        impl Default for $state {
-            fn default() -> Self {
-                Self::new_keyed(&[], $bytes::to_usize())
-            }
-        }
-
-        impl BlockInput for $state {
+        impl UpdateCore for $name {
             type BlockSize = $block_size;
-        }
+            type Buffer = LazyBlockBuffer<Self::BlockSize>;
 
-        impl Update for $state {
-            fn update(&mut self, data: impl AsRef<[u8]>) {
-                self.update(data.as_ref());
+            fn update_blocks(&mut self, blocks: &[Block]) {
+                for block in blocks {
+                    self.t += block.len() as u64;
+                    self.compress(block, 0, 0);
+                }
             }
         }
 
-        impl VariableOutputDirty for $state {
+        // impl FromKey for $name {
+        //     type KeySize = $bytes;
+
+        //     fn new(key: &GenericArray<u8, Self::KeySize>) -> Self {
+        //         Self::with_params(key, &[], &[], output_size)
+        //     }
+
+        //     fn new_from_slice(key: &[u8]) -> Result<Self, InvalidLength> {
+        //         Self::with_params(key, &[], &[], output_size)
+        //     }
+        // }
+
+        impl VariableOutputCore for $name {
+            type MaxOutputSize = $bytes;
+
+            #[inline]
             fn new(output_size: usize) -> Result<Self, InvalidOutputSize> {
-                if output_size == 0 || output_size > $bytes::to_usize() {
+                if output_size > Self::MaxOutputSize::USIZE {
                     return Err(InvalidOutputSize);
                 }
                 Ok(Self::new_keyed(&[], output_size))
             }
 
-            fn output_size(&self) -> usize {
-                self.n
-            }
-
-            fn finalize_variable_dirty(&mut self, f: impl FnOnce(&[u8])) {
-                let n = self.n;
-                let res = self.finalize_with_flag(0);
-                f(&res[..n]);
-            }
-        }
-
-        impl Reset for $state {
-            fn reset(&mut self) {
-                self.t = self.t0;
-                self.m = self.m0;
-                self.h = self.h0;
+            #[inline]
+            fn finalize_variable_core(
+                &mut self,
+                buffer: &mut LazyBlockBuffer<Self::BlockSize>,
+                output_size: usize,
+                f: impl FnOnce(&[u8]),
+            ) {
+                self.t += buffer.get_pos() as u64;
+                let block = buffer.pad_zeros();
+                let res = self.finalize_with_flag(block, 0);
+                f(&res[..output_size]);
             }
         }
 
-        opaque_debug::implement!($state);
-        digest::impl_write!($state);
+        // impl Reset for $name {
+        //     fn reset(&mut self) {
+        //         self.t = self.t0;
+        //         self.m = self.m0;
+        //         self.h = self.h0;
+        //     }
+        // }
 
-        #[derive(Clone)]
-        #[doc=$doc]
-        pub struct $fix_state {
-            state: $state,
-        }
-
-        impl $fix_state {
-            /// Creates a new hashing context with the full set of sequential-mode parameters.
-            pub fn with_params(key: &[u8], salt: &[u8], persona: &[u8]) -> Self {
-                let state = $state::with_params(key, salt, persona, $bytes::to_usize());
-                Self { state }
+        impl AlgorithmName for $name {
+            #[inline]
+            fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                f.write_str($alg_name)
             }
         }
 
-        impl Default for $fix_state {
-            fn default() -> Self {
-                let state = $state::new_keyed(&[], $bytes::to_usize());
-                Self { state }
+        impl fmt::Debug for $name {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                f.write_str(concat!(stringify!($name), " { ... }"))
             }
         }
-
-        impl BlockInput for $fix_state {
-            type BlockSize = $block_size;
-        }
-
-        impl Update for $fix_state {
-            fn update(&mut self, data: impl AsRef<[u8]>) {
-                self.state.update(data.as_ref());
-            }
-        }
-
-        impl FixedOutputDirty for $fix_state {
-            type OutputSize = $bytes;
-
-            fn finalize_into_dirty(&mut self, out: &mut Output) {
-                out.copy_from_slice(&self.state.finalize_with_flag(0));
-            }
-        }
-
-        impl Reset for $fix_state {
-            fn reset(&mut self) {
-                self.state.reset()
-            }
-        }
-
-        impl NewMac for $fix_state {
-            type KeySize = $bytes;
-
-            fn new(key: &GenericArray<u8, $bytes>) -> Self {
-                let state = $state::new_keyed(key, $bytes::to_usize());
-                Self { state }
-            }
-
-            fn new_varkey(key: &[u8]) -> Result<Self, InvalidKeyLength> {
-                if key.len() > $bytes::to_usize() {
-                    Err(InvalidKeyLength)
-                } else {
-                    let state = $state::new_keyed(key, $bytes::to_usize());
-                    Ok(Self { state })
-                }
-            }
-        }
-
-        impl Mac for $fix_state {
-            type OutputSize = $bytes;
-
-            fn update(&mut self, data: &[u8]) {
-                self.state.update(data);
-            }
-
-            fn reset(&mut self) {
-                <Self as Reset>::reset(self)
-            }
-
-            fn finalize(mut self) -> crypto_mac::Output<Self> {
-                crypto_mac::Output::new(self.state.finalize_with_flag(0))
-            }
-        }
-
-        opaque_debug::implement!($fix_state);
-        digest::impl_write!($fix_state);
 
         fn copy(src: &[u8], dst: &mut [u8]) {
             assert!(dst.len() >= src.len());

@@ -94,8 +94,24 @@
 #[cfg(feature = "std")]
 extern crate std;
 
-use digest::core_api::{CoreWrapper, CtVariableCoreWrapper, RtVariableCoreWrapper};
-use digest::generic_array::typenum::{U32, U64};
+pub use crypto_mac;
+pub use digest::{self, Digest};
+
+use core::{convert::TryInto, ops::Div};
+// use crypto_mac::{InvalidKeyLength, Mac, NewMac, FromKey};
+use core::fmt;
+use digest::{
+    block_buffer::LazyBlockBuffer,
+    core_api::{
+        AlgorithmName, CoreWrapper, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore,
+        VariableOutputCore,
+    },
+    generic_array::{
+        typenum::{Unsigned, U128, U32, U4, U64},
+        GenericArray,
+    },
+    InvalidOutputSize,
+};
 
 mod as_bytes;
 mod consts;
@@ -103,15 +119,31 @@ mod consts;
 mod simd;
 
 #[macro_use]
-mod blake2;
+mod macros;
 
-mod blake2b;
-mod blake2s;
+// mod blake2b;
+// mod blake2s;
 
-pub use crypto_mac;
-pub use digest::{self, Digest};
+use as_bytes::AsBytes;
+use consts::{BLAKE2B_IV, BLAKE2S_IV};
+use simd::{u32x4, u64x4, Vector4};
 
-pub use crate::blake2b::Blake2bVarCore;
+blake2_impl!(
+    Blake2bVarCore,
+    "Blake2b",
+    u64,
+    u64x4,
+    U64,
+    U128,
+    32,
+    24,
+    16,
+    63,
+    BLAKE2B_IV,
+    "Blake2b instance with a variable output.",
+    "Blake2b instance with a fixed output.",
+);
+
 /// BLAKE2b which allows to choose output size at runtime.
 pub type Blake2bVar = RtVariableCoreWrapper<Blake2bVarCore>;
 /// Core hasher state of BLAKE2b generic over output size.
@@ -121,7 +153,22 @@ pub type Blake2b<OutSize> = CoreWrapper<Blake2bCore<OutSize>>;
 /// BLAKE2b-512 hasher state.
 pub type Blake2b512 = Blake2b<U64>;
 
-pub use crate::blake2s::Blake2sVarCore;
+blake2_impl!(
+    Blake2sVarCore,
+    "Blake2s",
+    u32,
+    u32x4,
+    U32,
+    U64,
+    16,
+    12,
+    8,
+    7,
+    BLAKE2S_IV,
+    "Blake2s instance with a variable output.",
+    "Blake2s instance with a fixed output.",
+);
+
 /// BLAKE2s which allows to choose output size at runtime.
 pub type Blake2sVar = RtVariableCoreWrapper<Blake2sVarCore>;
 /// Core hasher state of BLAKE2s generic over output size.

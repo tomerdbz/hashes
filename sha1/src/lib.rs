@@ -24,6 +24,7 @@
 //! [2]: https://github.com/RustCrypto/hashes
 
 #![no_std]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![doc(
     html_logo_url = "https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg",
     html_favicon_url = "https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg"
@@ -45,6 +46,9 @@ use digest::{
 
 mod compress;
 
+#[cfg(feature = "compress")]
+pub use compress::compress;
+#[cfg(not(feature = "compress"))]
 use compress::compress;
 
 type BlockSize = U64;
@@ -66,7 +70,7 @@ impl UpdateCore for Sha1Core {
 
     fn update_blocks(&mut self, blocks: &[Block]) {
         self.block_len += blocks.len() as u64;
-        compress(&mut self.h, convert(blocks));
+        compress(&mut self.h, blocks);
     }
 }
 
@@ -83,7 +87,7 @@ impl FixedOutputCore for Sha1Core {
         let bit_len = 8 * (buffer.get_pos() as u64 + bs * self.block_len);
 
         let mut h = self.h;
-        buffer.len64_padding_be(bit_len, |b| compress(&mut h, convert(from_ref(b))));
+        buffer.len64_padding_be(bit_len, |b| compress(&mut h, from_ref(b)));
         for (chunk, v) in out.chunks_exact_mut(4).zip(h.iter()) {
             chunk.copy_from_slice(&v.to_be_bytes());
         }
@@ -121,11 +125,3 @@ impl fmt::Debug for Sha1Core {
 
 /// SHA-1 hasher state.
 pub type Sha1 = CoreWrapper<Sha1Core>;
-
-#[inline(always)]
-fn convert(blocks: &[Block]) -> &[[u8; BLOCK_SIZE]] {
-    // SAFETY: GenericArray<u8, U64> and [u8; 64] have
-    // exactly the same memory layout
-    let p = blocks.as_ptr() as *const [u8; BLOCK_SIZE];
-    unsafe { core::slice::from_raw_parts(p, blocks.len()) }
-}

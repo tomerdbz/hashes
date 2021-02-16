@@ -35,3 +35,7 @@ std = ["digest/std"]
 asm = ["sha2-asm", "libc"]
 compress = [] # Expose compress function
 force-soft = [] # Force software implementation
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

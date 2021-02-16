@@ -13,6 +13,7 @@ cfg_if::cfg_if! {
 }
 
 /// SHA-512 compression function.
+#[cfg_attr(docsrs, doc(cfg(feature = "compress")))]
 pub fn compress512(state: &mut [u64; 8], blocks: &[GenericArray<u8, U128>]) {
     // SAFETY: GenericArray<u8, U64> and [u8; 64] have
     // exactly the same memory layout

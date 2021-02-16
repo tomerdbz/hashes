@@ -24,6 +24,7 @@ cfg_if::cfg_if! {
 }
 
 /// SHA-256 compression function.
+#[cfg_attr(docsrs, doc(cfg(feature = "compress")))]
 pub fn compress256(state: &mut [u32; 8], blocks: &[GenericArray<u8, U64>]) {
     // SAFETY: GenericArray<u8, U64> and [u8; 64] have
     // exactly the same memory layout

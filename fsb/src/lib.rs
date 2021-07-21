@@ -48,7 +48,7 @@
 #[macro_use]
 mod macros;
 
-use core::{convert::TryInto, fmt};
+use core::fmt;
 pub use digest::{self, Digest};
 
 // Double check this contains all values in the reference implementation

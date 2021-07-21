@@ -104,21 +104,21 @@ macro_rules! fsb_impl {
             /// $(W_i)_{i\in[0;w-1]}$ between $0$ and $n - 1$. The value of each $W_i$ is computed
             /// from the inputs bits like this:
             /// $W_i = i \times (n / w) + IV_i + M_i \times 2^{r / w}.
-            fn computing_W_indices(
+            fn computing_w_indices(
                 input_vector: &[u8; Self::SIZE_OUTPUT_COMPRESS],
                 message: &[u8; Self::SIZE_MSG_CHUNKS],
             ) -> [u32; $w] {
-                let mut W_indices: [u32; $w] = [0; $w];
+                let mut wind: [u32; $w] = [0; $w];
                 let divided_message: [u8; $w] = Self::dividing_bits(message, ($s - $r) / $w);
                 for i in 0..($w) {
                     let message_i = divided_message[i] as u32;
 
-                    W_indices[i] = (i * $n / $w) as u32
+                    wind[i] = (i * $n / $w) as u32
                         + input_vector[i] as u32
                         + (message_i << ($r / $w) as u8);
                 }
 
-                W_indices
+                wind
             }
 
             /// This function servers the purpose presented in table 3, of breaking a bit array into
@@ -165,7 +165,7 @@ macro_rules! fsb_impl {
             ) {
                 let mut initial_vector = [0u8; Self::SIZE_OUTPUT_COMPRESS];
 
-                let w_indices = Self::computing_W_indices(hash, message_block);
+                let w_indices = Self::computing_w_indices(hash, message_block);
                 for w_index in w_indices.iter() {
                     let chosen_vec = w_index / $r as u32;
                     let shift_value = w_index % $r as u32;
@@ -190,9 +190,7 @@ macro_rules! fsb_impl {
                 let mut truncated = [0u8; Self::SIZE_OUTPUT_COMPRESS];
 
                 if shift_value == 0 {
-                    array[..Self::SIZE_OUTPUT_COMPRESS]
-                        .try_into()
-                        .expect("SIZE_VECTORS is always bigger than SIZE_OUTPUT_COMPRESS")
+                    truncated.copy_from_slice(&array[..Self::SIZE_OUTPUT_COMPRESS]);
                 } else if shift_value <= (bits_in_cue as u32) {
                     let bytes_to_shift = 1;
                     let starting_byte = (array_len - bytes_to_shift) as usize;
@@ -203,8 +201,6 @@ macro_rules! fsb_impl {
                         truncated[position] ^= array[position - 1] >> (8 - shift_value);
                         truncated[position] ^= array[position] << shift_value;
                     }
-
-                    truncated
                 } else {
                     // First we need to decide which is the last byte and bit that will go to the first position.
                     // Then, we build our truncated array from there. Recall that the last byte is not complete,
@@ -266,8 +262,6 @@ macro_rules! fsb_impl {
                                 }
                             }
                         }
-
-                        truncated
                     } else {
                         truncated[..bytes_to_shift].clone_from_slice(
                             &array[starting_byte..(starting_byte + bytes_to_shift)],
@@ -281,9 +275,9 @@ macro_rules! fsb_impl {
                             truncated[position] ^= array[index] << (8 - bits_in_cue);
                             truncated[position] ^= array[index + 1] >> bits_in_cue;
                         }
-                        truncated
                     }
                 }
+                truncated
             }
 
             fn convert(block: &GenericArray<u8, $blocksize>) -> &[u8; Self::SIZE_MSG_CHUNKS] {

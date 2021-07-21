@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.9.7 (2021-07-18)
+### Changed
+- Make `aarch64` CPU feature detection OS-independent ([#276])
+- Bump `sha1-asm` to v0.5; support ARMv8 Crypto Extensions on Apple targets ([#289])
+
+[#276]: https://github.com/RustCrypto/hashes/pull/276
+[#289]: https://github.com/RustCrypto/hashes/pull/289
+
+## 0.9.6 (2021-05-11)
+### Changed
+- Use `cpufeatures` to detect intrinsics support on `aarch64` targets ([#268])
+
+[#268]: https://github.com/RustCrypto/hashes/pull/268
+
+## 0.9.5 (2021-05-05)
+### Changed
+- Switch from `cpuid-bool` to `cpufeatures` ([#263])
+
+[#263]: https://github.com/RustCrypto/hashes/pull/263
+
 ## 0.9.4 (2021-02-16)
 ### Added
 - Expose compression function under the `compress` feature flag. ([#238])

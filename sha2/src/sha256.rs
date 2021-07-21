@@ -13,7 +13,7 @@ cfg_if::cfg_if! {
         }
         mod x86;
         use x86::compress;
-    } else if #[cfg(all(feature = "asm", target_arch = "aarch64", target_os = "linux"))] {
+    } else if #[cfg(all(feature = "asm", target_arch = "aarch64"))] {
         mod soft;
         mod aarch64;
         use aarch64::compress;
@@ -23,7 +23,10 @@ cfg_if::cfg_if! {
     }
 }
 
-/// SHA-256 compression function.
+/// Raw SHA-256 compression function.
+///
+/// This is a low-level "hazmat" API which provides direct access to the core
+/// functionality of SHA-256.
 #[cfg_attr(docsrs, doc(cfg(feature = "compress")))]
 pub fn compress256(state: &mut [u32; 8], blocks: &[GenericArray<u8, U64>]) {
     // SAFETY: GenericArray<u8, U64> and [u8; 64] have

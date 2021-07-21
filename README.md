@@ -15,6 +15,7 @@ BLAKE2, SHA-2 or SHA-3.
 | Name        | Algorithm  | Crates.io | Documentation | Build Status | [Security] |
 |-------------|------------|-----------|---------------|--------------|------------|
 | `blake2`    | [BLAKE2] | [![crates.io](https://img.shields.io/crates/v/blake2.svg)](https://crates.io/crates/blake2) | [![Documentation](https://docs.rs/blake2/badge.svg)](https://docs.rs/blake2) | [![build](https://github.com/rustcrypto/hashes/workflows/blake2/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:blake2+branch:master) | :green_heart: |
+| `fsb`       | [FSB] | [![crates.io](https://img.shields.io/crates/v/fsb.svg)](https://crates.io/crates/fsb) | [![Documentation](https://docs.rs/fsb/badge.svg)](https://docs.rs/fsb) | [![build](https://github.com/rustcrypto/hashes/workflows/fsb/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/fsb/actions?query=workflow:fsb+branch:master) | :green_heart: |
 | `gost94`    | [GOST94] (GOST R 34.11-94) | [![crates.io](https://img.shields.io/crates/v/gost94.svg)](https://crates.io/crates/gost94) | [![Documentation](https://docs.rs/gost94/badge.svg)](https://docs.rs/gost94) | [![build](https://github.com/rustcrypto/hashes/workflows/gost94/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:gost94+branch:master) | :yellow_heart: |
 | `groestl`   | [Grøstl] (Groestl) | [![crates.io](https://img.shields.io/crates/v/groestl.svg)](https://crates.io/crates/groestl) | [![Documentation](https://docs.rs/groestl/badge.svg)](https://docs.rs/groestl) | [![build](https://github.com/rustcrypto/hashes/workflows/groestl/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:groestl+branch:master) | :green_heart: |
 | `k12`       | [KangarooTwelve] | [![crates.io](https://img.shields.io/crates/v/k12.svg)](https://crates.io/crates/k12) | [![Documentation](https://docs.rs/k12/badge.svg)](https://docs.rs/k12) | [![build](https://github.com/rustcrypto/hashes/workflows/k12/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:k12+branch:master) | :green_heart: |
@@ -26,6 +27,7 @@ BLAKE2, SHA-2 or SHA-3.
 | `sha2`      | [SHA-2] | [![crates.io](https://img.shields.io/crates/v/sha2.svg)](https://crates.io/crates/sha2) |  [![Documentation](https://docs.rs/sha2/badge.svg)](https://docs.rs/sha2) | [![build](https://github.com/rustcrypto/hashes/workflows/sha2/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:sha2+branch:master) | :green_heart: |
 | `sha3`      | [SHA-3] (Keccak) | [![crates.io](https://img.shields.io/crates/v/sha3.svg)](https://crates.io/crates/sha3) |  [![Documentation](https://docs.rs/sha3/badge.svg)](https://docs.rs/sha3) | [![build](https://github.com/rustcrypto/hashes/workflows/sha3/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:sha3+branch:master) | :green_heart: |
 | `shabal`    | [SHABAL] | [![crates.io](https://img.shields.io/crates/v/shabal.svg)](https://crates.io/crates/shabal) |  [![Documentation](https://docs.rs/shabal/badge.svg)](https://docs.rs/shabal) | [![build](https://github.com/rustcrypto/hashes/workflows/shabal/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:shabal+branch:master) | :green_heart: |
+| `sm3`       | [SM3 (OSCCA GM/T 0004-2012)][SM3] | [![crates.io](https://img.shields.io/crates/v/sm3.svg)](https://crates.io/crates/sm3) |  [![Documentation](https://docs.rs/sm3/badge.svg)](https://docs.rs/sm3) | [![build](https://github.com/rustcrypto/hashes/workflows/sm3/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:sm3+branch:master) | :green_heart: |
 | `streebog`  | [Streebog] (GOST R 34.11-2012) | [![crates.io](https://img.shields.io/crates/v/streebog.svg)](https://crates.io/crates/streebog) |  [![Documentation](https://docs.rs/streebog/badge.svg)](https://docs.rs/streebog) | [![build](https://github.com/rustcrypto/hashes/workflows/streebog/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:streebog+branch:master) | :yellow_heart: |
 | `tiger`  | [Tiger] | [![crates.io](https://img.shields.io/crates/v/tiger.svg)](https://crates.io/crates/tiger) |  [![Documentation](https://docs.rs/tiger/badge.svg)](https://docs.rs/tiger) | [![build](https://github.com/rustcrypto/hashes/workflows/tiger/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:tiger+branch:master) | :green_heart: |
 | `whirlpool` | [Whirlpool] | [![crates.io](https://img.shields.io/crates/v/whirlpool.svg)](https://crates.io/crates/whirlpool) |  [![Documentation](https://docs.rs/whirlpool/badge.svg)](https://docs.rs/whirlpool) | [![build](https://github.com/rustcrypto/hashes/workflows/whirlpool/badge.svg?branch=master&event=push)](https://github.com/RustCrypto/hashes/actions?query=workflow:whirlpool+branch:master) | :green_heart: |
@@ -72,7 +74,7 @@ blake2 = "0.9"
 ```
 
 Note that crates in this repository have an enabled by default `std` feature.
-So if you plan to use the crate in `no_std` enviroments, don't forget to disable it:
+So if you plan to use the crate in `no_std` environments, don't forget to disable it:
 
 ```toml
 [dependencies]
@@ -113,7 +115,7 @@ let hash = Blake2b::new()
 println!("Result: {:x}", hash);
 ```
 
-If the whole message is available you also can use convinience `digest` method:
+If the whole message is available you also can use convenience `digest` method:
 
 ```Rust
 use blake2::{Blake2b, Digest};
@@ -210,6 +212,7 @@ dual licensed as above, without any additional terms or conditions.
 [//]: # (algorithms)
 
 [BLAKE2]: https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2
+[FSB]: https://en.wikipedia.org/wiki/Fast_syndrome-based_hash
 [GOST94]: https://en.wikipedia.org/wiki/GOST_(hash_function)
 [Grøstl]: https://en.wikipedia.org/wiki/Grøstl
 [KangarooTwelve]: https://keccak.team/kangarootwelve.html
@@ -221,6 +224,7 @@ dual licensed as above, without any additional terms or conditions.
 [SHA-2]: https://en.wikipedia.org/wiki/SHA-2
 [SHA-3]: https://en.wikipedia.org/wiki/SHA-3
 [SHABAL]: https://www.cs.rit.edu/~ark/20090927/Round2Candidates/Shabal.pdf
+[SM3]: https://en.wikipedia.org/wiki/SM3_(hash_function)
 [Streebog]: https://en.wikipedia.org/wiki/Streebog
 [Whirlpool]: https://en.wikipedia.org/wiki/Whirlpool_(cryptography)
 [Tiger]: http://www.cs.technion.ac.il/~biham/Reports/Tiger/tiger/tiger.html

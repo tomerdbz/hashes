@@ -3,6 +3,9 @@
 //! This crate implements only the modified 1996 versions, not the original
 //! one from 1992.
 //!
+//! Note that RIPEMD-256 provides only the same security as RIPEMD-128,
+//! and RIPEMD-320 provides only the same security as RIPEMD-160.
+//!
 //! # Usage
 //!
 //! ```rust

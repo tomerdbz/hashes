@@ -51,13 +51,14 @@ pub use digest::{self, Digest};
 use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
-    consts::{U20, U40, U64},
+    consts::{U20, U32, U40, U64},
     core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };
 
 mod c160;
+mod c256;
 mod c320;
 
 type BlockSize = U64;
@@ -135,6 +136,79 @@ impl fmt::Debug for Ripemd160Core {
 
 /// RIPEMD-160 hasher state.
 pub type Ripemd160 = CoreWrapper<Ripemd160Core>;
+
+/// Core RIPEMD-256 hasher state.
+#[derive(Clone)]
+pub struct Ripemd256Core {
+    h: [u32; c256::DIGEST_BUF_LEN],
+    block_len: u64,
+}
+
+impl UpdateCore for Ripemd256Core {
+    type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
+
+    #[inline]
+    fn update_blocks(&mut self, blocks: &[Block]) {
+        // Assumes that `block_len` does not overflow
+        self.block_len += blocks.len() as u64;
+        for block in blocks {
+            c256::compress(&mut self.h, block);
+        }
+    }
+}
+
+impl FixedOutputCore for Ripemd256Core {
+    type OutputSize = U32;
+
+    #[inline]
+    fn finalize_fixed_core(
+        &mut self,
+        buffer: &mut BlockBuffer<Self::BlockSize>,
+        out: &mut GenericArray<u8, Self::OutputSize>,
+    ) {
+        let bs = Self::BlockSize::U64;
+        let bit_len = 8 * (buffer.get_pos() as u64 + bs * self.block_len);
+        let mut h = self.h;
+        buffer.len64_padding_le(bit_len, |block| c256::compress(&mut h, block));
+
+        for (chunk, v) in out.chunks_exact_mut(4).zip(h.iter()) {
+            chunk.copy_from_slice(&v.to_le_bytes());
+        }
+    }
+}
+
+impl Default for Ripemd256Core {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            h: c256::H0,
+            block_len: 0,
+        }
+    }
+}
+
+impl Reset for Ripemd256Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
+impl AlgorithmName for Ripemd256Core {
+    fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("Ripemd256")
+    }
+}
+
+impl fmt::Debug for Ripemd256Core {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("Ripemd256Core { ... }")
+    }
+}
+
+/// RIPEMD-160 hasher state.
+pub type Ripemd256 = CoreWrapper<Ripemd256Core>;
 
 /// Core RIPEMD-320 hasher state.
 #[derive(Clone)]

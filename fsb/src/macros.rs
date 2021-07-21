@@ -12,7 +12,6 @@ macro_rules! fsb_impl {
             state: [u8; $r / 8],
         }
 
-
         impl UpdateCore for $state {
             type BlockSize = $blocksize;
             type Buffer = BlockBuffer<Self::BlockSize>;
@@ -36,7 +35,7 @@ macro_rules! fsb_impl {
                 out: &mut GenericArray<u8, Self::OutputSize>,
             ) {
                 let block_bytes = self.blocks_len * Self::BlockSize::U64;
-                let bit_len = 8 * (block_bytes + buffer.get_pos() as u64); 
+                let bit_len = 8 * (block_bytes + buffer.get_pos() as u64);
                 let mut h = self.state;
                 buffer.len64_padding_be(bit_len, |b| Self::compress(&mut h, Self::convert(b)));
 
@@ -288,9 +287,7 @@ macro_rules! fsb_impl {
             }
 
             fn convert(block: &GenericArray<u8, $blocksize>) -> &[u8; Self::SIZE_MSG_CHUNKS] {
-                unsafe {
-                    &*(block.as_ptr() as *const [u8; Self::SIZE_MSG_CHUNKS])
-                }
+                unsafe { &*(block.as_ptr() as *const [u8; Self::SIZE_MSG_CHUNKS]) }
             }
         }
     };

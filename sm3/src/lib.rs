@@ -49,8 +49,8 @@ use digest::{
     Reset,
 };
 
-mod consts;
 mod compress;
+mod consts;
 
 use compress::compress;
 

@@ -48,8 +48,8 @@
 #[macro_use]
 mod macros;
 
+use core::{convert::TryInto, fmt};
 pub use digest::{self, Digest};
-use core::{fmt, convert::TryInto};
 
 // Double check this contains all values in the reference implementation
 static PI: &[u8; 272384] = include_bytes!("pi.bin");

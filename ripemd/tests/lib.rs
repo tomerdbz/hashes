@@ -26,8 +26,7 @@ fn ripemd256_1million_a() {
 
 #[test]
 fn ripemd320_1million_a() {
-    let expected = hex!(
-        "bdee37f4371e20646b8b0d862dda16292ae36f40965e8c8509e63d1dbddecc503e2b63eb9245bb66"
-    );
+    let expected =
+        hex!("bdee37f4371e20646b8b0d862dda16292ae36f40965e8c8509e63d1dbddecc503e2b63eb9245bb66");
     one_million_a::<Ripemd320>(&expected);
 }

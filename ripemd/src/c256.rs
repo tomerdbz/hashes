@@ -1,5 +1,5 @@
-use core::{convert::TryInto, mem::swap};
 use super::Block;
+use core::{convert::TryInto, mem::swap};
 
 pub const DIGEST_BUF_LEN: usize = 8;
 pub const HALF_DIGEST_BUF_LEN: usize = DIGEST_BUF_LEN / 2;

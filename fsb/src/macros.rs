@@ -39,7 +39,7 @@ macro_rules! fsb_impl {
                 let mut h = self.state;
                 buffer.len64_padding_be(bit_len, |b| Self::compress(&mut h, Self::convert(b)));
 
-                let res = whirlpool::Whirlpool::digest(&h);
+                let res = whirlpool::Whirlpool::digest(&h[..]);
                 let n = out.len();
                 out.copy_from_slice(&res[..n]);
             }

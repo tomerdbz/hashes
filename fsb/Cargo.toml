@@ -1,7 +1,7 @@
 [package]
 name = "fsb"
 description = "FSB hash function"
-version = "0.0.2"
+version = "0.10.0"
 authors = ["RustCrypto Developers"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
@@ -11,16 +11,13 @@ keywords = ["crypto", "fsb", "hash", "digest"]
 categories = ["cryptography", "no-std"]
 
 [dependencies]
-#whirlpool = { version = "0.9", path = "../whirlpool", default-features = false }
-whirlpool = "0.9"
-digest = "0.9"
-block-buffer = { version = "0.9", features = ["block-padding"] }
-opaque-debug = "0.3"
+whirlpool = { version = "0.10", path = "../whirlpool", default-features = false }
+digest = { version = "0.10.0-pre.3", features = ["core-api", "block-padding"] }
 
 [dev-dependencies]
 hex-literal = "0.2"
-digest = { version = "0.9", features = ["dev"] }
+digest = { version = "0.10.0-pre.3", features = ["dev"] }
 
 [features]
-asm = ["whirlpool/asm"]
-std = ["whirlpool/std"]
+default = ["std"]
+std = ["digest/std"]

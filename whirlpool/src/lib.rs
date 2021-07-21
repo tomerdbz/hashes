@@ -141,7 +141,7 @@ impl Reset for WhirlpoolCore {
 
 impl AlgorithmName for WhirlpoolCore {
     fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("WhirlpoolCore")
+        f.write_str("Whirlpool")
     }
 }
 

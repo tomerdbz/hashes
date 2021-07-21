@@ -1,67 +1,5 @@
-//! SM3
-#![allow(clippy::many_single_char_names, clippy::too_many_arguments)]
-use crate::consts::{SM3_IV, T32};
-use block_buffer::BlockBuffer;
 use core::convert::TryInto;
-use core::slice::from_ref;
-use digest::consts::{U32, U64};
-use digest::generic_array::GenericArray;
-use digest::{BlockInput, FixedOutputDirty, Reset, Update};
-
-/// The SM3 hash algorithm with the SM3 initial hash value.
-#[derive(Clone)]
-pub struct Sm3 {
-    len: u64,
-    buffer: BlockBuffer<U64>,
-    state: [u32; 8],
-}
-
-impl Default for Sm3 {
-    fn default() -> Self {
-        Sm3 {
-            len: 0,
-            buffer: Default::default(),
-            state: SM3_IV,
-        }
-    }
-}
-
-impl BlockInput for Sm3 {
-    type BlockSize = U64;
-}
-
-impl Update for Sm3 {
-    fn update(&mut self, input: impl AsRef<[u8]>) {
-        self.len += (input.as_ref().len() as u64) << 3;
-        let s = &mut self.state;
-        self.buffer
-            .input_blocks(input.as_ref(), |b| sm3_compress(s, b));
-    }
-}
-
-impl FixedOutputDirty for Sm3 {
-    type OutputSize = U32;
-
-    fn finalize_into_dirty(&mut self, out: &mut digest::Output<Self>) {
-        let s = &mut self.state;
-        let l = self.len;
-        self.buffer
-            .len64_padding_be(l, |b| sm3_compress(s, from_ref(b)));
-
-        let s = self.state;
-        for (chunk, v) in out.chunks_exact_mut(4).zip(s.iter()) {
-            chunk.copy_from_slice(&v.to_be_bytes());
-        }
-    }
-}
-
-impl Reset for Sm3 {
-    fn reset(&mut self) {
-        self.len = 0;
-        self.buffer.reset();
-        self.state = SM3_IV;
-    }
-}
+use crate::{Block, consts::T32};
 
 #[inline(always)]
 fn ff1(x: u32, y: u32, z: u32) -> u32 {
@@ -209,7 +147,7 @@ macro_rules! R2 {
     }};
 }
 
-fn sm3_digest_block_u32(state: &mut [u32; 8], block: &[u32; 16]) {
+fn compress_u32(state: &mut [u32; 8], block: &[u32; 16]) {
     let mut x: [u32; 16] = *block;
 
     let mut a = state[0];
@@ -296,15 +234,12 @@ fn sm3_digest_block_u32(state: &mut [u32; 8], block: &[u32; 16]) {
     state[7] ^= h;
 }
 
-pub fn sm3_compress(state: &mut [u32; 8], blocks: &[GenericArray<u8, U64>]) {
-    #[allow(unsafe_code)]
-    let blocks = unsafe { &*(blocks as *const _ as *const [[u8; 64]]) };
-
-    let mut w = [0u32; 16];
+pub(crate) fn compress(state: &mut [u32; 8], blocks: &[Block]) {
     for block in blocks {
+        let mut w = [0u32; 16];
         for (o, chunk) in w.iter_mut().zip(block.chunks_exact(4)) {
             *o = u32::from_be_bytes(chunk.try_into().unwrap());
         }
-        sm3_digest_block_u32(state, &w);
+        compress_u32(state, &w);
     }
 }

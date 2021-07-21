@@ -2,7 +2,7 @@
 name = "sm3"
 version = "0.3.0"
 description = "SM3 (OSCCA GM/T 0004-2012) hash function"
-authors = ["Tianjia Zhang <tianjia.zhang@linux.alibaba.com>"]
+authors = ["RustCrypto Developers"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 edition = "2018"
@@ -12,12 +12,10 @@ keywords = ["crypto", "sm3", "hash", "digest"]
 categories = ["cryptography", "no-std"]
 
 [dependencies]
-digest = "0.9"
-block-buffer = "0.9"
-opaque-debug = "0.3"
+digest = { version = "0.10.0-pre.3", features = ["core-api"] }
 
 [dev-dependencies]
-digest = { version = "0.9", features = ["dev"] }
+digest = { version = "0.10.0-pre.3", features = ["dev"] }
 hex-literal = "0.2"
 
 [features]

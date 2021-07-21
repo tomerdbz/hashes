@@ -36,19 +36,92 @@
 #![deny(unsafe_code)]
 #![warn(missing_docs, rust_2018_idioms)]
 
-#[cfg(feature = "std")]
-extern crate std;
-
-mod consts;
-mod sm3;
-
 pub use digest::{self, Digest};
 
-#[cfg(feature = "std")]
-use digest::Update;
+use core::{fmt, slice::from_ref};
+use digest::{
+    block_buffer::BlockBuffer,
+    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
+    generic_array::{
+        typenum::{Unsigned, U32, U64},
+        GenericArray,
+    },
+    Reset,
+};
 
-pub use crate::sm3::Sm3;
+mod consts;
+mod compress;
 
-opaque_debug::implement!(Sm3);
+use compress::compress;
 
-digest::impl_write!(Sm3);
+type BlockSize = U64;
+type Block = GenericArray<u8, BlockSize>;
+
+/// Core SM3 hasher state.
+#[derive(Clone)]
+pub struct Sm3Core {
+    block_len: u64,
+    h: [u32; 8],
+}
+
+impl UpdateCore for Sm3Core {
+    type BlockSize = BlockSize;
+    type Buffer = BlockBuffer<BlockSize>;
+
+    fn update_blocks(&mut self, blocks: &[Block]) {
+        self.block_len += blocks.len() as u64;
+        compress(&mut self.h, blocks);
+    }
+}
+
+impl FixedOutputCore for Sm3Core {
+    type OutputSize = U32;
+
+    #[inline]
+    fn finalize_fixed_core(
+        &mut self,
+        buffer: &mut BlockBuffer<Self::BlockSize>,
+        out: &mut GenericArray<u8, Self::OutputSize>,
+    ) {
+        let bs = Self::BlockSize::U64;
+        let bit_len = 8 * (buffer.get_pos() as u64 + bs * self.block_len);
+
+        let mut h = self.h;
+        buffer.len64_padding_be(bit_len, |b| compress(&mut h, from_ref(b)));
+        for (chunk, v) in out.chunks_exact_mut(4).zip(h.iter()) {
+            chunk.copy_from_slice(&v.to_be_bytes());
+        }
+    }
+}
+
+impl Default for Sm3Core {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            h: consts::H0,
+            block_len: 0,
+        }
+    }
+}
+
+impl Reset for Sm3Core {
+    #[inline]
+    fn reset(&mut self) {
+        *self = Default::default();
+    }
+}
+
+impl AlgorithmName for Sm3Core {
+    fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("Sm3")
+    }
+}
+
+impl fmt::Debug for Sm3Core {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("Sm3Core { ... }")
+    }
+}
+
+/// Sm3 hasher state.
+pub type Sm3 = CoreWrapper<Sm3Core>;

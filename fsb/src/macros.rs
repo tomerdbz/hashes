@@ -12,6 +12,72 @@ macro_rules! fsb_impl {
             state: [u8; $r / 8],
         }
 
+
+        impl UpdateCore for $state {
+            type BlockSize = $blocksize;
+            type Buffer = BlockBuffer<Self::BlockSize>;
+
+            #[inline]
+            fn update_blocks(&mut self, blocks: &[GenericArray<u8, Self::BlockSize>]) {
+                self.blocks_len += blocks.len() as u64;
+                for block in blocks {
+                    Self::compress(&mut self.state, Self::convert(block));
+                }
+            }
+        }
+
+        impl FixedOutputCore for $state {
+            type OutputSize = $outputsize;
+
+            #[inline]
+            fn finalize_fixed_core(
+                &mut self,
+                buffer: &mut BlockBuffer<Self::BlockSize>,
+                out: &mut GenericArray<u8, Self::OutputSize>,
+            ) {
+                let block_bytes = self.blocks_len * Self::BlockSize::U64;
+                let bit_len = 8 * (block_bytes + buffer.get_pos() as u64); 
+                let mut h = self.state;
+                buffer.len64_padding_be(bit_len, |b| Self::compress(&mut h, Self::convert(b)));
+
+                let res = whirlpool::Whirlpool::digest(&h);
+                let n = out.len();
+                out.copy_from_slice(&res[..n]);
+            }
+        }
+
+        impl Default for $state {
+            #[inline]
+            fn default() -> Self {
+                Self {
+                    blocks_len: 0u64,
+                    state: [0u8; $r / 8],
+                }
+            }
+        }
+
+        impl Reset for $state {
+            #[inline]
+            fn reset(&mut self) {
+                *self = Default::default();
+            }
+        }
+
+        impl AlgorithmName for $state {
+            fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                f.write_str(stringify!($full_state))
+            }
+        }
+
+        impl fmt::Debug for $state {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                f.write_str(concat!(stringify!($state), " { ... }"))
+            }
+        }
+
+        #[doc=$full_doc]
+        pub type $full_state = CoreWrapper<$state>;
+
         impl $state {
             const SIZE_OUTPUT_COMPRESS: usize = $r / 8;
             const SIZE_INPUT_COMPRESS: usize = $s / 8;
@@ -227,70 +293,5 @@ macro_rules! fsb_impl {
                 }
             }
         }
-
-        impl UpdateCore for $state {
-            type BlockSize = $blocksize;
-            type Buffer = BlockBuffer<Self::BlockSize>;
-
-            #[inline]
-            fn update_blocks(&mut self, blocks: &[GenericArray<u8, Self::BlockSize>]) {
-                self.blocks_len += blocks.len() as u64;
-                for block in blocks {
-                    Self::compress(&mut self.state, Self::convert(block));
-                }
-            }
-        }
-
-        impl FixedOutputCore for $state {
-            type OutputSize = $outputsize;
-
-            #[inline]
-            fn finalize_fixed_core(
-                &mut self,
-                buffer: &mut BlockBuffer<Self::BlockSize>,
-                out: &mut GenericArray<u8, Self::OutputSize>,
-            ) {
-                let block_bytes = self.blocks_len * Self::BlockSize::U64;
-                let bit_len = 8 * (block_bytes + buffer.get_pos() as u64); 
-                let mut h = self.state;
-                buffer.len64_padding_be(bit_len, |b| Self::compress(&mut h, Self::convert(b)));
-
-                let res = whirlpool::Whirlpool::digest(&h);
-                let n = out.len();
-                out.copy_from_slice(&res[..n]);
-            }
-        }
-
-        impl Default for $state {
-            #[inline]
-            fn default() -> Self {
-                Self {
-                    blocks_len: 0u64,
-                    state: [0u8; $r / 8],
-                }
-            }
-        }
-
-        impl Reset for $state {
-            #[inline]
-            fn reset(&mut self) {
-                *self = Default::default();
-            }
-        }
-
-        impl AlgorithmName for $state {
-            fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                f.write_str(stringify!($full_state))
-            }
-        }
-
-        impl fmt::Debug for $state {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                f.write_str(concat!(stringify!($state), " { ... }"))
-            }
-        }
-
-        #[doc=$full_doc]
-        pub type $full_state = CoreWrapper<$state>;
     };
 }

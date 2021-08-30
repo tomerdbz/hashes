@@ -12,11 +12,14 @@ macro_rules! sha3_impl {
             state: Sha3State,
         }
 
-        impl UpdateCore for $name {
+        impl BlockUser for $name {
             type BlockSize = $rate;
+        }
+
+        impl UpdateCore for $name {
             type Buffer = BlockBuffer<$rate>;
 
-            fn update_blocks(&mut self, blocks: &[GenericArray<u8, $rate>]) {
+            fn update_blocks(&mut self, blocks: &[Block<Self>]) {
                 for block in blocks {
                     self.state.absorb_block(block)
                 }
@@ -32,7 +35,8 @@ macro_rules! sha3_impl {
                 buffer: &mut BlockBuffer<Self::BlockSize>,
                 out: &mut GenericArray<u8, Self::OutputSize>,
             ) {
-                let block = buffer.pad_with::<$padding>();
+                let block = buffer.pad_with::<$padding>()
+                    .expect("buffer pos is always smaller than block");
                 self.state.absorb_block(block);
 
                 let n = out.len();
@@ -90,12 +94,15 @@ macro_rules! shake_impl {
             state: Sha3State,
         }
 
-        impl UpdateCore for $name {
+        impl BlockUser for $name {
             type BlockSize = $rate;
+        }
+
+        impl UpdateCore for $name {
             type Buffer = BlockBuffer<$rate>;
 
             #[inline]
-            fn update_blocks(&mut self, blocks: &[GenericArray<u8, $rate>]) {
+            fn update_blocks(&mut self, blocks: &[Block<Self>]) {
                 for block in blocks {
                     self.state.absorb_block(block)
                 }
@@ -110,7 +117,8 @@ macro_rules! shake_impl {
                 &mut self,
                 buffer: &mut BlockBuffer<Self::BlockSize>,
             ) -> Self::ReaderCore {
-                let block = buffer.pad_with::<$padding>();
+                let block = buffer.pad_with::<$padding>()
+                    .expect("buffer pos is always smaller than block");
                 self.state.absorb_block(block);
                 $reader {
                     state: self.state.clone(),
@@ -155,12 +163,14 @@ macro_rules! shake_impl {
             state: Sha3State,
         }
 
-        impl XofReaderCore for $reader {
+        impl BlockUser for $reader {
             type BlockSize = $rate;
+        }
 
+        impl XofReaderCore for $reader {
             #[inline]
-            fn read_block(&mut self) -> GenericArray<u8, Self::BlockSize> {
-                let mut block = GenericArray::<u8, Self::BlockSize>::default();
+            fn read_block(&mut self) -> Block<Self> {
+                let mut block = Block::<Self>::default();
                 let n = block.len();
                 self.state.as_bytes(|state| {
                     block.copy_from_slice(&state[..n]);

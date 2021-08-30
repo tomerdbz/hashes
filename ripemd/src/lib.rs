@@ -52,7 +52,7 @@ use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
     consts::{U20, U32, U40, U64},
-    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };
@@ -71,8 +71,11 @@ pub struct Ripemd160Core {
     block_len: u64,
 }
 
-impl UpdateCore for Ripemd160Core {
+impl BlockUser for Ripemd160Core {
     type BlockSize = BlockSize;
+}
+
+impl UpdateCore for Ripemd160Core {
     type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]
@@ -144,8 +147,11 @@ pub struct Ripemd256Core {
     block_len: u64,
 }
 
-impl UpdateCore for Ripemd256Core {
+impl BlockUser for Ripemd256Core {
     type BlockSize = BlockSize;
+}
+
+impl UpdateCore for Ripemd256Core {
     type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]
@@ -217,8 +223,11 @@ pub struct Ripemd320Core {
     block_len: u64,
 }
 
-impl UpdateCore for Ripemd320Core {
+impl BlockUser for Ripemd320Core {
     type BlockSize = BlockSize;
+}
+
+impl UpdateCore for Ripemd320Core {
     type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]

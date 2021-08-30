@@ -12,12 +12,15 @@ macro_rules! fsb_impl {
             state: [u8; $r / 8],
         }
 
-        impl UpdateCore for $state {
+        impl BlockUser for $state {
             type BlockSize = $blocksize;
+        }
+
+        impl UpdateCore for $state {
             type Buffer = BlockBuffer<Self::BlockSize>;
 
             #[inline]
-            fn update_blocks(&mut self, blocks: &[GenericArray<u8, Self::BlockSize>]) {
+            fn update_blocks(&mut self, blocks: &[Block<Self>]) {
                 self.blocks_len += blocks.len() as u64;
                 for block in blocks {
                     Self::compress(&mut self.state, Self::convert(block));

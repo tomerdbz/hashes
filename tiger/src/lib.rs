@@ -38,7 +38,7 @@ pub use digest::{self, Digest};
 use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{
         typenum::{Unsigned, U24, U64},
         GenericArray,
@@ -60,8 +60,11 @@ pub struct TigerCore {
     state: [u64; 3],
 }
 
-impl UpdateCore for TigerCore {
+impl BlockUser for TigerCore {
     type BlockSize = BlockSize;
+}
+
+impl UpdateCore for TigerCore {
     type Buffer = BlockBuffer<BlockSize>;
 
     fn update_blocks(&mut self, blocks: &[Block]) {
@@ -130,8 +133,11 @@ pub struct Tiger2Core {
     state: [u64; 3],
 }
 
-impl UpdateCore for Tiger2Core {
+impl BlockUser for Tiger2Core {
     type BlockSize = BlockSize;
+}
+
+impl UpdateCore for Tiger2Core {
     type Buffer = BlockBuffer<BlockSize>;
 
     fn update_blocks(&mut self, blocks: &[Block]) {

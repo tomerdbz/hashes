@@ -39,7 +39,7 @@ use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
     core_api::{
-        AlgorithmName, CoreWrapper, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore,
+        AlgorithmName, BlockUser, CoreWrapper, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore,
         VariableOutputCore,
     },
     generic_array::{
@@ -66,8 +66,11 @@ pub struct GroestlShortVarCore {
     blocks_len: u64,
 }
 
-impl UpdateCore for GroestlShortVarCore {
+impl BlockUser for GroestlShortVarCore {
     type BlockSize = ShortBlockSize;
+}
+
+impl UpdateCore for GroestlShortVarCore {
     type Buffer = BlockBuffer<ShortBlockSize>;
 
     #[inline]
@@ -148,8 +151,11 @@ pub struct GroestlLongVarCore {
     blocks_len: u64,
 }
 
-impl UpdateCore for GroestlLongVarCore {
+impl BlockUser for GroestlLongVarCore {
     type BlockSize = LongBlockSize;
+}
+
+impl UpdateCore for GroestlLongVarCore {
     type Buffer = BlockBuffer<LongBlockSize>;
 
     #[inline]

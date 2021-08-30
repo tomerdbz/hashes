@@ -184,8 +184,11 @@ macro_rules! blake2_impl {
             }
         }
 
-        impl UpdateCore for $name {
+        impl BlockUser for $name {
             type BlockSize = $block_size;
+        }
+
+        impl UpdateCore for $name {
             type Buffer = LazyBlockBuffer<Self::BlockSize>;
 
             fn update_blocks(&mut self, blocks: &[GenericArray<u8, $block_size>]) {

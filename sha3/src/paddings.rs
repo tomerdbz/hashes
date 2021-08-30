@@ -1,4 +1,4 @@
-use digest::block_buffer::block_padding::{generic_array::ArrayLength, Block, Padding, UnpadError};
+use digest::block_buffer::block_padding::{generic_array::ArrayLength, Block, Padding, UnpadError, PadError};
 
 macro_rules! impl_padding {
     ($name:ident, $pad:expr) => {
@@ -7,14 +7,15 @@ macro_rules! impl_padding {
 
         impl<B: ArrayLength<u8>> Padding<B> for $name {
             #[inline]
-            fn pad(block: &mut Block<B>, pos: usize) {
+            fn pad(block: &mut Block<B>, pos: usize) -> Result<(), PadError> {
                 if pos >= B::USIZE {
-                    panic!("`pos` is bigger or equal to block size");
+                    return Err(PadError);
                 }
                 block[pos] = $pad;
                 block[pos + 1..].iter_mut().for_each(|b| *b = 0);
                 let n = block.len();
                 block[n - 1] |= 0x80;
+                Ok(())
             }
 
             fn unpad(_: &Block<B>) -> Result<&[u8], UnpadError> {

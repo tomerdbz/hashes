@@ -3,7 +3,7 @@ use core::{convert::TryInto, fmt};
 use digest::{
     block_buffer::{block_padding::ZeroPadding, BlockBuffer},
     consts::U32,
-    core_api::{AlgorithmName, FixedOutputCore, UpdateCore},
+    core_api::{AlgorithmName, BlockUser, FixedOutputCore, UpdateCore},
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };
@@ -195,8 +195,11 @@ impl<P: Gost94Params> Gost94Core<P> {
     }
 }
 
-impl<P: Gost94Params> UpdateCore for Gost94Core<P> {
+impl<P: Gost94Params> BlockUser for Gost94Core<P> {
     type BlockSize = U32;
+}
+
+impl<P: Gost94Params> UpdateCore for Gost94Core<P> {
     type Buffer = BlockBuffer<U32>;
 
     #[inline]
@@ -218,7 +221,8 @@ impl<P: Gost94Params> FixedOutputCore for Gost94Core<P> {
     ) {
         if buffer.get_pos() != 0 {
             self.update_n(buffer.get_pos());
-            let block = buffer.pad_with::<ZeroPadding>();
+            let block = buffer.pad_with::<ZeroPadding>()
+                .expect("buffer pos is always smaller than block");
             self.compress(block);
         }
 

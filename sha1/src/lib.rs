@@ -46,7 +46,7 @@ pub use digest::{self, Digest};
 use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{
         typenum::{Unsigned, U20, U64},
         GenericArray,
@@ -74,8 +74,11 @@ pub struct Sha1Core {
     block_len: u64,
 }
 
-impl UpdateCore for Sha1Core {
+impl BlockUser for Sha1Core {
     type BlockSize = BlockSize;
+}
+
+impl UpdateCore for Sha1Core {
     type Buffer = BlockBuffer<BlockSize>;
 
     fn update_blocks(&mut self, blocks: &[Block]) {

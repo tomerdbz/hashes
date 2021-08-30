@@ -56,7 +56,7 @@ use core::fmt;
 use digest::{
     block_buffer::{block_padding::Iso7816, BlockBuffer},
     consts::{U24, U28, U32, U48, U64},
-    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };
@@ -72,8 +72,11 @@ macro_rules! impl_core {
             state: EngineState,
         }
 
-        impl UpdateCore for $name {
+        impl BlockUser for $name {
             type BlockSize = BlockSize;
+        }
+
+        impl UpdateCore for $name {
             type Buffer = BlockBuffer<BlockSize>;
 
             #[inline]
@@ -93,7 +96,8 @@ macro_rules! impl_core {
                 buffer: &mut BlockBuffer<Self::BlockSize>,
                 out: &mut GenericArray<u8, Self::OutputSize>,
             ) {
-                let block = buffer.pad_with::<Iso7816>();
+                let block = buffer.pad_with::<Iso7816>()
+                    .expect("buffer pos is always smaller than block");
                 compress_final(&mut self.state, &block);
                 let n = 16 - <$out_size>::USIZE / 4;
                 let b = &self.state.get_b()[n..];

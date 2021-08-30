@@ -1,8 +1,9 @@
 use core::fmt;
 use digest::{
+    consts::U64,
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
-    generic_array::{typenum::U64, GenericArray},
+    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    generic_array::GenericArray,
     Reset,
 };
 
@@ -14,8 +15,11 @@ pub struct Streebog512Core {
     state: StreebogState,
 }
 
-impl UpdateCore for Streebog512Core {
+impl BlockUser for Streebog512Core {
     type BlockSize = U64;
+}
+
+impl UpdateCore for Streebog512Core {
     type Buffer = BlockBuffer<U64>;
 
     #[inline]

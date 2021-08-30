@@ -105,7 +105,7 @@ use core::fmt;
 use digest::{
     block_buffer::LazyBlockBuffer,
     core_api::{
-        AlgorithmName, CoreWrapper, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore,
+        AlgorithmName, BlockUser, CoreWrapper, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore,
         VariableOutputCore,
     },
     generic_array::{

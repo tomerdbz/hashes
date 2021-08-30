@@ -43,7 +43,7 @@ use compress::compress;
 use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::{
         typenum::{Unsigned, U16, U64},
         GenericArray,
@@ -62,8 +62,11 @@ pub struct Md5Core {
     state: [u32; 4],
 }
 
-impl UpdateCore for Md5Core {
+impl BlockUser for Md5Core {
     type BlockSize = BlockSize;
+}
+
+impl UpdateCore for Md5Core {
     type Buffer = BlockBuffer<BlockSize>;
 
     #[inline]

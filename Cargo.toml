@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "fsb",
     "blake2",
+    "fsb",
     "gost94",
     "groestl",
     "k12",
@@ -23,6 +23,7 @@ members = [
 opt-level = 2
 
 [patch.crates-io]
-digest = { git = "https://github.com/RustCrypto/traits" }
-crypto-mac = { git = "https://github.com/RustCrypto/traits" }
-block-buffer = { git = "https://github.com/RustCrypto/utils" }
+digest = { git = "https://github.com/RustCrypto/traits/", branch = "new_traits" }
+crypto-mac = { git = "https://github.com/RustCrypto/traits/", branch = "new_traits" }
+block-buffer = { git = "https://github.com/RustCrypto/utils", branch = "pad_error" }
+inout = { git = "https://github.com/RustCrypto/utils", branch = "pad_error" }

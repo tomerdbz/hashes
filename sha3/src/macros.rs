@@ -35,7 +35,8 @@ macro_rules! sha3_impl {
                 buffer: &mut BlockBuffer<Self::BlockSize>,
                 out: &mut GenericArray<u8, Self::OutputSize>,
             ) {
-                let block = buffer.pad_with::<$padding>()
+                let block = buffer
+                    .pad_with::<$padding>()
                     .expect("buffer pos is always smaller than block");
                 self.state.absorb_block(block);
 
@@ -117,7 +118,8 @@ macro_rules! shake_impl {
                 &mut self,
                 buffer: &mut BlockBuffer<Self::BlockSize>,
             ) -> Self::ReaderCore {
-                let block = buffer.pad_with::<$padding>()
+                let block = buffer
+                    .pad_with::<$padding>()
                     .expect("buffer pos is always smaller than block");
                 self.state.absorb_block(block);
                 $reader {

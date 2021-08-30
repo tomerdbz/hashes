@@ -96,7 +96,8 @@ macro_rules! impl_core {
                 buffer: &mut BlockBuffer<Self::BlockSize>,
                 out: &mut GenericArray<u8, Self::OutputSize>,
             ) {
-                let block = buffer.pad_with::<Iso7816>()
+                let block = buffer
+                    .pad_with::<Iso7816>()
                     .expect("buffer pos is always smaller than block");
                 compress_final(&mut self.state, &block);
                 let n = 16 - <$out_size>::USIZE / 4;

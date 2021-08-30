@@ -39,8 +39,8 @@ use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
     core_api::{
-        AlgorithmName, BlockUser, CoreWrapper, CtVariableCoreWrapper, RtVariableCoreWrapper, UpdateCore,
-        VariableOutputCore,
+        AlgorithmName, BlockUser, CoreWrapper, CtVariableCoreWrapper, RtVariableCoreWrapper,
+        UpdateCore, VariableOutputCore,
     },
     generic_array::{
         typenum::{Unsigned, U128, U28, U32, U48, U64},

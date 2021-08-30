@@ -35,8 +35,8 @@ pub use digest::{self, Digest};
 
 use core::fmt;
 use digest::{
-    consts::U16,
     block_buffer::{block_padding::Pkcs7, BlockBuffer},
+    consts::U16,
     core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
     generic_array::GenericArray,
     Reset,
@@ -104,7 +104,8 @@ impl FixedOutputCore for Md2Core {
         buffer: &mut BlockBuffer<Self::BlockSize>,
         out: &mut GenericArray<u8, Self::OutputSize>,
     ) {
-        let block = buffer.pad_with::<Pkcs7>()
+        let block = buffer
+            .pad_with::<Pkcs7>()
             .expect("buffer pos is always smaller than block");
         self.compress(block);
         let checksum = self.checksum;

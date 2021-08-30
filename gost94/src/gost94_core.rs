@@ -221,7 +221,8 @@ impl<P: Gost94Params> FixedOutputCore for Gost94Core<P> {
     ) {
         if buffer.get_pos() != 0 {
             self.update_n(buffer.get_pos());
-            let block = buffer.pad_with::<ZeroPadding>()
+            let block = buffer
+                .pad_with::<ZeroPadding>()
                 .expect("buffer pos is always smaller than block");
             self.compress(block);
         }

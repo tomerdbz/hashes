@@ -9,7 +9,6 @@ macro_rules! blake2_impl {
         pub struct $name {
             h: [$vec; 2],
             t: u64,
-            // h0: [$vec; 2],
         }
 
         impl $name {
@@ -84,9 +83,6 @@ macro_rules! blake2_impl {
                 //     copy(key, state.m.as_mut_bytes());
                 //     state.t = 2 * $bytes::to_u64();
                 // }
-
-                // state.t0 = state.t;
-                // state.m0 = state.m;
 
                 $name {
                     h: [
@@ -238,14 +234,6 @@ macro_rules! blake2_impl {
                 f(&res[..output_size]);
             }
         }
-
-        // impl Reset for $name {
-        //     fn reset(&mut self) {
-        //         self.t = self.t0;
-        //         self.m = self.m0;
-        //         self.h = self.h0;
-        //     }
-        // }
 
         impl AlgorithmName for $name {
             #[inline]

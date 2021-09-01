@@ -52,7 +52,10 @@ use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
     consts::{U20, U32, U40, U64},
-    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };
@@ -75,9 +78,15 @@ impl BlockUser for Ripemd160Core {
     type BlockSize = BlockSize;
 }
 
-impl UpdateCore for Ripemd160Core {
+impl BufferUser for Ripemd160Core {
     type Buffer = BlockBuffer<BlockSize>;
+}
 
+impl OutputSizeUser for Ripemd160Core {
+    type OutputSize = U20;
+}
+
+impl UpdateCore for Ripemd160Core {
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
         // Assumes that `block_len` does not overflow
@@ -89,8 +98,6 @@ impl UpdateCore for Ripemd160Core {
 }
 
 impl FixedOutputCore for Ripemd160Core {
-    type OutputSize = U20;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,
@@ -151,9 +158,15 @@ impl BlockUser for Ripemd256Core {
     type BlockSize = BlockSize;
 }
 
-impl UpdateCore for Ripemd256Core {
+impl BufferUser for Ripemd256Core {
     type Buffer = BlockBuffer<BlockSize>;
+}
 
+impl OutputSizeUser for Ripemd256Core {
+    type OutputSize = U32;
+}
+
+impl UpdateCore for Ripemd256Core {
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
         // Assumes that `block_len` does not overflow
@@ -165,8 +178,6 @@ impl UpdateCore for Ripemd256Core {
 }
 
 impl FixedOutputCore for Ripemd256Core {
-    type OutputSize = U32;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,
@@ -227,9 +238,15 @@ impl BlockUser for Ripemd320Core {
     type BlockSize = BlockSize;
 }
 
-impl UpdateCore for Ripemd320Core {
+impl BufferUser for Ripemd320Core {
     type Buffer = BlockBuffer<BlockSize>;
+}
 
+impl OutputSizeUser for Ripemd320Core {
+    type OutputSize = U40;
+}
+
+impl UpdateCore for Ripemd320Core {
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
         // Assumes that `block_len` does not overflow
@@ -241,8 +258,6 @@ impl UpdateCore for Ripemd320Core {
 }
 
 impl FixedOutputCore for Ripemd320Core {
-    type OutputSize = U40;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,

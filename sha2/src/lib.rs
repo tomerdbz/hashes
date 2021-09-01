@@ -65,7 +65,10 @@ pub use digest::{self, Digest};
 use core::{fmt, mem::size_of, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::{
         typenum::{Unsigned, U128, U28, U32, U48, U64},
         GenericArray,
@@ -100,9 +103,15 @@ macro_rules! implement {
             type BlockSize = $block_size;
         }
 
-        impl UpdateCore for $name {
+        impl BufferUser for $name {
             type Buffer = BlockBuffer<$block_size>;
+        }
 
+        impl OutputSizeUser for $name {
+            type OutputSize = $out_size;
+        }
+
+        impl UpdateCore for $name {
             #[inline]
             fn update_blocks(&mut self, blocks: &[GenericArray<u8, $block_size>]) {
                 self.block_len += blocks.len() as $dword;
@@ -111,8 +120,6 @@ macro_rules! implement {
         }
 
         impl FixedOutputCore for $name {
-            type OutputSize = $out_size;
-
             #[inline]
             fn finalize_fixed_core(
                 &mut self,

@@ -41,7 +41,10 @@ pub use digest::{self, Digest};
 use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::{
         typenum::{Unsigned, U32, U64},
         GenericArray,
@@ -68,9 +71,16 @@ impl BlockUser for Sm3Core {
     type BlockSize = BlockSize;
 }
 
-impl UpdateCore for Sm3Core {
+impl BufferUser for Sm3Core {
     type Buffer = BlockBuffer<BlockSize>;
+}
 
+impl OutputSizeUser for Sm3Core {
+    type OutputSize = U32;
+}
+
+impl UpdateCore for Sm3Core {
+    #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
         self.block_len += blocks.len() as u64;
         compress(&mut self.h, blocks);
@@ -78,8 +88,6 @@ impl UpdateCore for Sm3Core {
 }
 
 impl FixedOutputCore for Sm3Core {
-    type OutputSize = U32;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,

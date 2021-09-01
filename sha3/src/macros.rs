@@ -16,9 +16,16 @@ macro_rules! sha3_impl {
             type BlockSize = $rate;
         }
 
-        impl UpdateCore for $name {
+        impl BufferUser for $name {
             type Buffer = BlockBuffer<$rate>;
+        }
 
+        impl OutputSizeUser for $name {
+            type OutputSize = $output_size;
+        }
+
+        impl UpdateCore for $name {
+            #[inline]
             fn update_blocks(&mut self, blocks: &[Block<Self>]) {
                 for block in blocks {
                     self.state.absorb_block(block)
@@ -27,8 +34,6 @@ macro_rules! sha3_impl {
         }
 
         impl FixedOutputCore for $name {
-            type OutputSize = $output_size;
-
             #[inline]
             fn finalize_fixed_core(
                 &mut self,
@@ -99,9 +104,11 @@ macro_rules! shake_impl {
             type BlockSize = $rate;
         }
 
-        impl UpdateCore for $name {
+        impl BufferUser for $name {
             type Buffer = BlockBuffer<$rate>;
+        }
 
+        impl UpdateCore for $name {
             #[inline]
             fn update_blocks(&mut self, blocks: &[Block<Self>]) {
                 for block in blocks {

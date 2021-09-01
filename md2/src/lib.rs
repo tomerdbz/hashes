@@ -37,7 +37,10 @@ use core::fmt;
 use digest::{
     block_buffer::{block_padding::Pkcs7, BlockBuffer},
     consts::U16,
-    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::GenericArray,
     Reset,
 };
@@ -84,9 +87,15 @@ impl BlockUser for Md2Core {
     type BlockSize = BlockSize;
 }
 
-impl UpdateCore for Md2Core {
+impl BufferUser for Md2Core {
     type Buffer = BlockBuffer<BlockSize>;
+}
 
+impl OutputSizeUser for Md2Core {
+    type OutputSize = U16;
+}
+
+impl UpdateCore for Md2Core {
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
         for block in blocks {
@@ -96,8 +105,6 @@ impl UpdateCore for Md2Core {
 }
 
 impl FixedOutputCore for Md2Core {
-    type OutputSize = U16;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,

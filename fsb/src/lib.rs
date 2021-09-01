@@ -56,7 +56,10 @@ static PI: &[u8; 272384] = include_bytes!("pi.bin");
 
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, Block, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, Block, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };

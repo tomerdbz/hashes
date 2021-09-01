@@ -16,9 +16,15 @@ macro_rules! fsb_impl {
             type BlockSize = $blocksize;
         }
 
-        impl UpdateCore for $state {
-            type Buffer = BlockBuffer<Self::BlockSize>;
+        impl OutputSizeUser for $state {
+            type OutputSize = $outputsize;
+        }
 
+        impl BufferUser for $state {
+            type Buffer = BlockBuffer<Self::BlockSize>;
+        }
+
+        impl UpdateCore for $state {
             #[inline]
             fn update_blocks(&mut self, blocks: &[Block<Self>]) {
                 self.blocks_len += blocks.len() as u64;
@@ -29,8 +35,6 @@ macro_rules! fsb_impl {
         }
 
         impl FixedOutputCore for $state {
-            type OutputSize = $outputsize;
-
             #[inline]
             fn finalize_fixed_core(
                 &mut self,

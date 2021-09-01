@@ -3,7 +3,7 @@ use core::{convert::TryInto, fmt};
 use digest::{
     block_buffer::{block_padding::ZeroPadding, BlockBuffer},
     consts::U32,
-    core_api::{AlgorithmName, BlockUser, FixedOutputCore, UpdateCore},
+    core_api::{AlgorithmName, BlockUser, BufferUser, FixedOutputCore, OutputSizeUser, UpdateCore},
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };
@@ -199,9 +199,15 @@ impl<P: Gost94Params> BlockUser for Gost94Core<P> {
     type BlockSize = U32;
 }
 
-impl<P: Gost94Params> UpdateCore for Gost94Core<P> {
+impl<P: Gost94Params> BufferUser for Gost94Core<P> {
     type Buffer = BlockBuffer<U32>;
+}
 
+impl<P: Gost94Params> OutputSizeUser for Gost94Core<P> {
+    type OutputSize = U32;
+}
+
+impl<P: Gost94Params> UpdateCore for Gost94Core<P> {
     #[inline]
     fn update_blocks(&mut self, blocks: &[GenericArray<u8, Self::BlockSize>]) {
         let len = Self::BlockSize::USIZE * blocks.len();
@@ -211,8 +217,6 @@ impl<P: Gost94Params> UpdateCore for Gost94Core<P> {
 }
 
 impl<P: Gost94Params> FixedOutputCore for Gost94Core<P> {
-    type OutputSize = U32;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,

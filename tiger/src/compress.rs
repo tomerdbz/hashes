@@ -1,5 +1,5 @@
 use super::tables::{T1, T2, T3, T4};
-use super::Block;
+use super::{Block, State};
 use core::convert::TryInto;
 
 #[inline(always)]
@@ -50,7 +50,7 @@ fn key_schedule(x: &mut [u64; 8]) {
     x[7] = x[7].wrapping_sub(x[6] ^ 0x0123_4567_89AB_CDEF);
 }
 
-pub(crate) fn compress(state: &mut [u64; 3], blocks: &[Block]) {
+pub(crate) fn compress(state: &mut State, blocks: &[Block]) {
     let mut block: [u64; 8] = Default::default();
     for raw_block in blocks {
         for (o, chunk) in block.iter_mut().zip(raw_block.chunks_exact(8)) {

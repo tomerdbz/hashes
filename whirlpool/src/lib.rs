@@ -56,7 +56,10 @@ use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
     consts::U64,
-    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };
@@ -76,9 +79,15 @@ impl BlockUser for WhirlpoolCore {
     type BlockSize = BlockSize;
 }
 
-impl UpdateCore for WhirlpoolCore {
+impl BufferUser for WhirlpoolCore {
     type Buffer = BlockBuffer<BlockSize>;
+}
 
+impl OutputSizeUser for WhirlpoolCore {
+    type OutputSize = U64;
+}
+
+impl UpdateCore for WhirlpoolCore {
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
         let block_bits = 8 * BLOCK_SIZE as u64;
@@ -88,8 +97,6 @@ impl UpdateCore for WhirlpoolCore {
 }
 
 impl FixedOutputCore for WhirlpoolCore {
-    type OutputSize = U64;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,

@@ -37,7 +37,10 @@ pub use digest::{self, Digest};
 use core::{convert::TryInto, fmt};
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::{
         typenum::{Unsigned, U16, U64},
         GenericArray,
@@ -58,9 +61,15 @@ impl BlockUser for Md4Core {
     type BlockSize = BlockSize;
 }
 
-impl UpdateCore for Md4Core {
+impl BufferUser for Md4Core {
     type Buffer = BlockBuffer<BlockSize>;
+}
 
+impl OutputSizeUser for Md4Core {
+    type OutputSize = U16;
+}
+
+impl UpdateCore for Md4Core {
     #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
         self.block_len = self.block_len.wrapping_add(blocks.len() as u64);
@@ -71,8 +80,6 @@ impl UpdateCore for Md4Core {
 }
 
 impl FixedOutputCore for Md4Core {
-    type OutputSize = U16;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,

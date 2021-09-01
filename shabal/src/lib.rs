@@ -56,7 +56,10 @@ use core::fmt;
 use digest::{
     block_buffer::{block_padding::Iso7816, BlockBuffer},
     consts::{U24, U28, U32, U48, U64},
-    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::{typenum::Unsigned, GenericArray},
     Reset,
 };
@@ -76,9 +79,15 @@ macro_rules! impl_core {
             type BlockSize = BlockSize;
         }
 
-        impl UpdateCore for $name {
+        impl BufferUser for $name {
             type Buffer = BlockBuffer<BlockSize>;
+        }
 
+        impl OutputSizeUser for $name {
+            type OutputSize = $out_size;
+        }
+
+        impl UpdateCore for $name {
             #[inline]
             fn update_blocks(&mut self, blocks: &[Block]) {
                 for block in blocks {
@@ -88,8 +97,6 @@ macro_rules! impl_core {
         }
 
         impl FixedOutputCore for $name {
-            type OutputSize = $out_size;
-
             #[inline]
             fn finalize_fixed_core(
                 &mut self,

@@ -2,7 +2,10 @@ use core::fmt;
 use digest::{
     block_buffer::BlockBuffer,
     consts::{U32, U64},
-    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::GenericArray,
     Reset,
 };
@@ -19,9 +22,15 @@ impl BlockUser for Streebog256Core {
     type BlockSize = U64;
 }
 
-impl UpdateCore for Streebog256Core {
+impl BufferUser for Streebog256Core {
     type Buffer = BlockBuffer<U64>;
+}
 
+impl OutputSizeUser for Streebog256Core {
+    type OutputSize = U32;
+}
+
+impl UpdateCore for Streebog256Core {
     #[inline]
     fn update_blocks(&mut self, blocks: &[GenericArray<u8, Self::BlockSize>]) {
         self.state.update_blocks(blocks);
@@ -29,8 +38,6 @@ impl UpdateCore for Streebog256Core {
 }
 
 impl FixedOutputCore for Streebog256Core {
-    type OutputSize = U32;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,

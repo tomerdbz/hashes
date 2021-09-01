@@ -38,7 +38,10 @@ pub use digest::{self, Digest};
 use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
-    core_api::{AlgorithmName, BlockUser, CoreWrapper, FixedOutputCore, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        UpdateCore,
+    },
     generic_array::{
         typenum::{Unsigned, U24, U64},
         GenericArray,
@@ -50,6 +53,13 @@ mod compress;
 mod tables;
 use compress::compress;
 
+type State = [u64; 3];
+const S0: State = [
+    0x0123_4567_89AB_CDEF,
+    0xFEDC_BA98_7654_3210,
+    0xF096_A5B4_C3B2_E187,
+];
+
 type BlockSize = U64;
 type Block = GenericArray<u8, U64>;
 
@@ -57,16 +67,23 @@ type Block = GenericArray<u8, U64>;
 #[derive(Clone)]
 pub struct TigerCore {
     block_len: u64,
-    state: [u64; 3],
+    state: State,
 }
 
 impl BlockUser for TigerCore {
     type BlockSize = BlockSize;
 }
 
-impl UpdateCore for TigerCore {
+impl BufferUser for TigerCore {
     type Buffer = BlockBuffer<BlockSize>;
+}
 
+impl OutputSizeUser for TigerCore {
+    type OutputSize = U24;
+}
+
+impl UpdateCore for TigerCore {
+    #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
         self.block_len += blocks.len() as u64;
         compress(&mut self.state, blocks);
@@ -74,8 +91,6 @@ impl UpdateCore for TigerCore {
 }
 
 impl FixedOutputCore for TigerCore {
-    type OutputSize = U24;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,
@@ -99,11 +114,7 @@ impl Default for TigerCore {
     fn default() -> Self {
         Self {
             block_len: 0,
-            state: [
-                0x0123_4567_89AB_CDEF,
-                0xFEDC_BA98_7654_3210,
-                0xF096_A5B4_C3B2_E187,
-            ],
+            state: S0,
         }
     }
 }
@@ -130,16 +141,23 @@ impl fmt::Debug for TigerCore {
 #[derive(Clone)]
 pub struct Tiger2Core {
     block_len: u64,
-    state: [u64; 3],
+    state: State,
 }
 
 impl BlockUser for Tiger2Core {
     type BlockSize = BlockSize;
 }
 
-impl UpdateCore for Tiger2Core {
+impl BufferUser for Tiger2Core {
     type Buffer = BlockBuffer<BlockSize>;
+}
 
+impl OutputSizeUser for Tiger2Core {
+    type OutputSize = U24;
+}
+
+impl UpdateCore for Tiger2Core {
+    #[inline]
     fn update_blocks(&mut self, blocks: &[Block]) {
         self.block_len += blocks.len() as u64;
         compress(&mut self.state, blocks);
@@ -147,8 +165,6 @@ impl UpdateCore for Tiger2Core {
 }
 
 impl FixedOutputCore for Tiger2Core {
-    type OutputSize = U24;
-
     #[inline]
     fn finalize_fixed_core(
         &mut self,

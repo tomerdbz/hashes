@@ -58,7 +58,7 @@ dependencies = [
 [[package]]
 name = "crypto-common"
 version = "0.1.0"
-source = "git+https://github.com/RustCrypto/traits/?branch=new_traits#dc5109f7c96f9b6b81ce7aac3a355b8a5ee9652e"
+source = "git+https://github.com/RustCrypto/traits/?branch=new_traits#8f488e755cb24d3bf243368c37018e852469a8c6"
 dependencies = [
  "block-buffer",
  "generic-array",
@@ -78,7 +78,7 @@ dependencies = [
 [[package]]
 name = "digest"
 version = "0.10.0"
-source = "git+https://github.com/RustCrypto/traits/?branch=new_traits#dc5109f7c96f9b6b81ce7aac3a355b8a5ee9652e"
+source = "git+https://github.com/RustCrypto/traits/?branch=new_traits#8f488e755cb24d3bf243368c37018e852469a8c6"
 dependencies = [
  "blobby",
  "crypto-common",
@@ -327,9 +327,4 @@ dependencies = [
 [[patch.unused]]
 name = "crypto-mac"
 version = "0.12.0-pre"
-source = "git+https://github.com/RustCrypto/traits/?branch=new_traits#dc5109f7c96f9b6b81ce7aac3a355b8a5ee9652e"
-
-[[patch.unused]]
-name = "inout"
-version = "0.1.0"
-source = "git+https://github.com/RustCrypto/utils?branch=pad_error#63cac368884f91a364a905739484ad0a77327abe"
+source = "git+https://github.com/RustCrypto/traits/?branch=new_traits#8f488e755cb24d3bf243368c37018e852469a8c6"

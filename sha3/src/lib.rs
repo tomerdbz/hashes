@@ -72,10 +72,9 @@ use digest::{
     consts::{U104, U136, U144, U168, U200, U28, U32, U48, U64, U72},
     core_api::{
         AlgorithmName, Block, BlockUser, BufferUser, CoreWrapper, ExtendableOutputCore,
-        FixedOutputCore, OutputSizeUser, UpdateCore, XofReaderCore, XofReaderCoreWrapper,
+        FixedOutputCore, OutputSizeUser, Reset, UpdateCore, XofReaderCore, XofReaderCoreWrapper,
     },
     generic_array::GenericArray,
-    Reset,
 };
 
 mod paddings;

@@ -3,9 +3,10 @@ use core::{convert::TryInto, fmt};
 use digest::{
     block_buffer::{block_padding::ZeroPadding, BlockBuffer},
     consts::U32,
-    core_api::{AlgorithmName, BlockUser, BufferUser, FixedOutputCore, OutputSizeUser, UpdateCore},
+    core_api::{
+        AlgorithmName, BlockUser, BufferUser, FixedOutputCore, OutputSizeUser, Reset, UpdateCore,
+    },
     generic_array::{typenum::Unsigned, GenericArray},
-    Reset,
 };
 
 use crate::params::{Block, Gost94Params, SBox};

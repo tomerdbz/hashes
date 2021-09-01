@@ -44,14 +44,13 @@ use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::BlockBuffer,
     core_api::{
-        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser, Reset,
         UpdateCore,
     },
     generic_array::{
         typenum::{Unsigned, U16, U64},
         GenericArray,
     },
-    Reset,
 };
 
 type BlockSize = U64;

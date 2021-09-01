@@ -38,11 +38,10 @@ use digest::{
     block_buffer::{block_padding::Pkcs7, BlockBuffer},
     consts::U16,
     core_api::{
-        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser, Reset,
         UpdateCore,
     },
     generic_array::GenericArray,
-    Reset,
 };
 
 mod consts;

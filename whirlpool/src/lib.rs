@@ -57,11 +57,10 @@ use digest::{
     block_buffer::BlockBuffer,
     consts::U64,
     core_api::{
-        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
+        AlgorithmName, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser, Reset,
         UpdateCore,
     },
     generic_array::{typenum::Unsigned, GenericArray},
-    Reset,
 };
 
 type BlockSize = U64;

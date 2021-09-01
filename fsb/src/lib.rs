@@ -58,10 +58,9 @@ use digest::{
     block_buffer::BlockBuffer,
     core_api::{
         AlgorithmName, Block, BlockUser, BufferUser, CoreWrapper, FixedOutputCore, OutputSizeUser,
-        UpdateCore,
+        Reset, UpdateCore,
     },
     generic_array::{typenum::Unsigned, GenericArray},
-    Reset,
 };
 
 // FSB-160

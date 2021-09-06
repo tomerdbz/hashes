@@ -63,6 +63,18 @@ pub struct Md4 {
     state: Md4State,
 }
 
+impl Md4 {
+    pub fn new_with_state(a: u32, b: u32, c: u32, d: u32) -> Md4 {
+        let mut hasher = Md4::new();
+        hasher.state = Md4State { s: [a, b, c, d] };
+
+        hasher
+    }
+
+    pub fn get_state(&self) -> [u32; 4] {
+        self.state.s
+    }
+}
 impl Md4State {
     fn process_block(&mut self, input: &Block) {
         fn f(x: u32, y: u32, z: u32) -> u32 {

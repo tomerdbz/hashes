@@ -40,7 +40,7 @@
     html_favicon_url = "https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg"
 )]
 #![deny(unsafe_code)]
-#![warn(missing_docs, rust_2018_idioms)]
+#![warn(rust_2018_idioms)]
 
 #[cfg(feature = "std")]
 extern crate std;
@@ -73,6 +73,26 @@ impl Default for Sha1 {
             len: 0u64,
             buffer: Default::default(),
         }
+    }
+}
+
+impl Sha1 {
+    pub fn new_with_state(a: u32, b: u32, c: u32, d: u32, e: u32) -> Sha1 {
+        let mut sha1 = Sha1 {
+            h: H,
+            len: 0u64,
+            buffer: Default::default(),
+        };
+
+        sha1.h = [a, b, c, d, e];
+        sha1
+    }
+
+    pub fn get_state(&self) -> [u32; 5] {
+        self.h
+    }
+    pub fn set_state(&mut self, h: [u32; 5]) {
+        self.h = h;
     }
 }
 
